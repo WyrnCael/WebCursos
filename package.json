@@ -1,11 +1,21 @@
 {
-    "name": "WebCursos",
-    "version": "1.0.0",
-    "keywords": ["util", "functional", "server", "client", "browser"],
-    "author": "Jota",
-    "contributors": [],
-    "dependencies": {},
-    "scripts": {
-      "start": "node app.js"
-    }
+  "name": "WebCursos",
+  "version": "1.0.0",
+  "keywords": [
+    "util",
+    "functional",
+    "server",
+    "client",
+    "browser"
+  ],
+  "author": "Jota",
+  "contributors": [],
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "express": "^4.14.0",
+    "mysql": "^2.12.0"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
 }
