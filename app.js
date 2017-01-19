@@ -33,7 +33,7 @@ app.post("/cursos", function(req, res) {
 app.put("/cursos/:id", function(req, res){
    var id = Number(req.params.id);
    var curso = req.body;
-   curso.IdCurso = id;
+   curso.Id = id;
    DAO.updateCurso(curso, function(err, r){
        if(err){
            res.status(500);
@@ -58,6 +58,23 @@ app.delete("/cursos/:id", function(req, res){
            res.status(404);
        } else {
            res.status(200);
+       }
+       res.end();
+   });
+});
+
+app.get("/cursos", function(req, res){
+   var id = Number(req.query.Id);
+   
+    DAO.selectCurso(id, function(err, r){
+       if(err){
+           res.status(500);
+           res.json(err);
+       } else if (r === -1){
+           res.status(404);
+       } else {
+           res.status(200);
+           res.json(r);
        }
        res.end();
    });

@@ -26,7 +26,7 @@ function insertCurso(datosCurso, callback){
                 if (err) {
                     callback(err);
                 } else {
-                    datosCurso.IdCurso = rows.insertId;
+                    datosCurso.Id = rows.insertId;
                     insertHorariosCurso(datosCurso, callback);
                 }                
             });
@@ -35,14 +35,14 @@ function insertCurso(datosCurso, callback){
 }
 
 function insertHorariosCurso(datosCurso, callback){
-    if(datosCurso.Horarios.length === 0) callback(datosCurso.IdCurso);
+    if(datosCurso.Horarios.length === 0) callback(datosCurso.Id);
     datosCurso.Horarios.forEach(function(h, indexH, arrayH){
         pool.getConnection(function(err, con) {
         if (err) {
             callback(err);
         } else {
             con.query("INSERT INTO Horarios(IdCurso, Dia, HoraInicio, HoraFin)" + 
-                           " VALUES (?, ?, ?, ?)", [datosCurso.IdCurso, h.Dia,
+                           " VALUES (?, ?, ?, ?)", [datosCurso.Id, h.Dia,
                             h.HoraInicio, h.HoraFin],
                 function(err, rows) { 
                     con.release();                
@@ -50,7 +50,7 @@ function insertHorariosCurso(datosCurso, callback){
                         callback(err);
                     } else {
                         if(indexH === arrayH.length - 1){
-                            callback(null, datosCurso.IdCurso);
+                            callback(null, datosCurso.Id);
                         }                        
                     }                
                 });
@@ -66,7 +66,7 @@ function updateCurso(datosCurso, callback){
     } else {
         con.query("UPDATE Cursos SET Titulo=?, Descripcion=?, Localidad=?, Direccion=?, NumPlazas=?, FechaInicio=?, FechaFin=?" + 
                        " WHERE Id = ?", [datosCurso.Titulo, datosCurso.Descripcion,
-                        datosCurso.Localidad, datosCurso.Direccion, datosCurso.NumPlazas, datosCurso.FechaInicio, datosCurso.FechaFin, datosCurso.IdCurso],
+                        datosCurso.Localidad, datosCurso.Direccion, datosCurso.NumPlazas, datosCurso.FechaInicio, datosCurso.FechaFin, datosCurso.Id],
             function(err, rows) { 
                 con.release();                
                 if (err) {
@@ -76,7 +76,7 @@ function updateCurso(datosCurso, callback){
                         callback(null, -1);
                     }
                     else{ 
-                        removeHorariosCurso(datosCurso.IdCurso, function(err){
+                        removeHorariosCurso(datosCurso.Id, function(err){
                             if(err){
                                 callback(err);
                             } else {
@@ -132,8 +132,50 @@ function removeCurso(idCurso, callback){
     });
 }
 
+function selectCurso(idCurso, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("SELECT * FROM CURSOS WHERE Id = ?", [idCurso],
+            function(err, rows) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    if(rows[0]){
+                        selectHorariosCurso(rows[0], callback);
+                    } else{
+                        callback(null, -1);
+                    }
+                }                
+            });
+        }
+    });
+}
+
+function selectHorariosCurso(curso, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("SELECT * FROM Horarios WHERE IdCurso = ?", [curso.Id],
+            function(err, rows) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    curso.Horarios = rows;
+                    callback(null, curso);
+                }                
+            });
+        }
+    });
+}
+
 module.exports = {
     insertCurso: insertCurso,
     updateCurso: updateCurso,
-    removeCurso: removeCurso
+    removeCurso: removeCurso,
+    selectCurso: selectCurso
 };
