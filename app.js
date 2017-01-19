@@ -63,8 +63,8 @@ app.delete("/cursos/:id", function(req, res){
    });
 });
 
-app.get("/cursos", function(req, res){
-   var id = Number(req.query.Id);
+app.get("/cursos/:id", function(req, res){
+   var id = Number(req.params.id);
    
     DAO.selectCurso(id, function(err, r){
        if(err){
@@ -72,6 +72,24 @@ app.get("/cursos", function(req, res){
            res.json(err);
        } else if (r === -1){
            res.status(404);
+       } else {
+           res.status(200);
+           res.json(r);
+       }
+       res.end();
+   });
+});
+
+app.get("/cursos/:str/:num/:pos", function(req, res){
+   var datosBusqueda = {};
+   datosBusqueda.str = req.params.str;
+   datosBusqueda.num = req.params.num;
+   datosBusqueda.pos = req.params.pos;
+    DAO.searchByNameCurso(datosBusqueda, function(err, r){
+       if(err){
+           console.log(err);
+           res.status(500);
+           res.json(err);
        } else {
            res.status(200);
            res.json(r);

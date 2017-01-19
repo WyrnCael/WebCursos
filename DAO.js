@@ -173,9 +173,29 @@ function selectHorariosCurso(curso, callback){
     });
 }
 
+function searchByNameCurso(datosBusqueda, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("SELECT * FROM Cursos WHERE Titulo LIKE ? ORDER BY FechaInicio ASC LIMIT ?, ?", 
+                    ['%' + datosBusqueda.str + '%', Number(datosBusqueda.pos), Number(datosBusqueda.num)],
+            function(err, rows) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    callback(null, rows);
+                }                
+            });
+        }
+    });
+}
+
 module.exports = {
     insertCurso: insertCurso,
     updateCurso: updateCurso,
     removeCurso: removeCurso,
-    selectCurso: selectCurso
+    selectCurso: selectCurso,
+    searchByNameCurso: searchByNameCurso
 };
