@@ -59,6 +59,81 @@ function insertHorariosCurso(datosCurso, callback){
     });
 }
 
+function updateCurso(datosCurso, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("UPDATE Cursos SET Titulo=?, Descripcion=?, Localidad=?, Direccion=?, NumPlazas=?, FechaInicio=?, FechaFin=?" + 
+                       " WHERE Id = ?", [datosCurso.Titulo, datosCurso.Descripcion,
+                        datosCurso.Localidad, datosCurso.Direccion, datosCurso.NumPlazas, datosCurso.FechaInicio, datosCurso.FechaFin, datosCurso.IdCurso],
+            function(err, rows) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    if(rows.affectedRows === 0){
+                        callback(null, -1);
+                    }
+                    else{ 
+                        removeHorariosCurso(datosCurso.IdCurso, function(err){
+                            if(err){
+                                callback(err);
+                            } else {
+                                insertHorariosCurso(datosCurso, callback);
+                            }
+                        });   
+                    }
+                }                
+            });
+        }
+    });
+}
+
+function removeHorariosCurso(idCurso, callback){
+    pool.getConnection(function(err, con) {
+        if (err) {
+            callback(err);
+        } else {
+            con.query("DELETE FROM Horarios WHERE IdCurso = ?", 
+                    [idCurso],
+            function(err, rows) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    callback(null);
+                }                
+            });
+        }
+    });
+}
+
+function removeCurso(idCurso, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("DELETE FROM CURSOS WHERE Id = ?", [idCurso],
+            function(err, rows) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    if(rows.affectedRows === 0){
+                        callback(null, -1);
+                    }
+                    else{ 
+                        callback(null);
+                    }
+                }                
+            });
+        }
+    });
+}
+
 module.exports = {
-    insertCurso: insertCurso
+    insertCurso: insertCurso,
+    updateCurso: updateCurso,
+    removeCurso: removeCurso
 };

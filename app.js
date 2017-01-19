@@ -11,42 +11,14 @@ var app = express();
 app.use(bodyParser.json());
 
 app.get("/", function(req, res){
-    /* curso = {};
-    curso.Titulo = "AAA";
-    curso.Descripcion = "BBB";
-    curso.Localidad = "MMM";
-    curso.Direccion = "MMO";
-    curso.NumPlazas = 5;
-    curso.FechaInicio = new Date();
-    curso.FechaFin = new Date();
-    curso.Horarios = [];
-    var horario = {};
-    horario.Dia = "Lunes";
-    var date = new Date();
-    horario.HoraInicio = date.getTime();
-    horario.HoraFin = date.getTime();
-    curso.Horarios.push(horario);
-    var horario = {};
-    horario.Dia = "Martes";
-    var date = new Date();
-    horario.HoraInicio = date.getTime();
-    horario.HoraFin = date.getTime();
-    curso.Horarios.push(horario);
-    var horario = {};
-    horario.Dia = "Miercoles";
-    var date = new Date();
-    horario.HoraInicio = date.getTime();
-    horario.HoraFin = date.getTime();
-    curso.Horarios.push(horario); 
-   DAO.insertCurso(curso, function(err, datos){
-       res.end();
-   }) ; */
+   
 });
 
 app.post("/cursos", function(req, res) {
     DAO.insertCurso(req.body, function(err, id){
         if(err){
            res.status(500);
+           res.json(err);
         } 
         else{
            var r = {};
@@ -56,6 +28,39 @@ app.post("/cursos", function(req, res) {
         }      
         res.end();
     });
+});
+
+app.put("/cursos/:id", function(req, res){
+   var id = Number(req.params.id);
+   var curso = req.body;
+   curso.IdCurso = id;
+   DAO.updateCurso(curso, function(err, r){
+       if(err){
+           res.status(500);
+           res.json(err);
+       } else if (r === -1){
+           res.status(404);
+       } else {
+           res.status(200);
+       }
+       res.end();
+   });
+});
+
+app.delete("/cursos/:id", function(req, res){
+   var id = Number(req.params.id);
+   
+    DAO.removeCurso(id, function(err, r){
+       if(err){
+           res.status(500);
+           res.json(err);
+       } else if (r === -1){
+           res.status(404);
+       } else {
+           res.status(200);
+       }
+       res.end();
+   });
 });
 
 app.listen(config.port, function(next) {
