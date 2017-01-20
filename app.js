@@ -3,15 +3,19 @@
  */
 var express = require("express");
 var bodyParser = require("body-parser");
+var path = require("path");
 var DAO = require('./DAO.js');
 var config = require('./config.js');
 
 var app = express();
 
+app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 
 app.get("/", function(req, res){
-   
+    res.status(300);
+    res.redirect("/index.html");
+    res.end();
 });
 
 app.post("/cursos", function(req, res) {
