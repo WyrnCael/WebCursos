@@ -91,12 +91,11 @@ app.get("/cursos/:str/:num/:pos", function(req, res){
    datosBusqueda.pos = req.params.pos;
     DAO.searchByNameCurso(datosBusqueda, function(err, r){
        if(err){
-           console.log(err);
            res.status(500);
-           res.json(err);
+           res.json(JSON.stringify(err));
        } else {
            res.status(200);
-           res.json(r);
+           res.json(JSON.stringify(r));
        }
        res.end();
    });
