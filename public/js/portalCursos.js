@@ -49,7 +49,6 @@ function manejaResultados(){
     $("#paginador").find("ul").remove();
     var paginador = $("#paginador").append("<ul class='pagination pagination-sm'></ul>").find("ul");
     paginasResultados.forEach(function(pagina, index, array) {
-        console.log(pagina);
         if(index === 0){
             var paginaInicial = $("<li class='disabled'><span>&laquo;</span></li>" + 
                     "<li class='active'><a href='#' data-num='" + (index+1) + "'>" + (index+1) + "</a></li>");
@@ -88,7 +87,7 @@ function mostrarPagina(numeroPagina){
         // Resultados
         var resultados = paginasResultados[numeroPagina - 1];
         resultados.forEach(function(p){
-            var nuevaFila = $("<tr><td>" + p.Titulo + "</td>" +
+            var nuevaFila = $("<tr data-id='" + p.Id + "'><td>" + p.Titulo + "</td>" +
                             "<td>" + p.Localidad + "</td>" +
                             "<td>" + p.FechaInicio + "</td>" +
                             "<td>" + p.FechaFin + "</td>" +
@@ -98,5 +97,27 @@ function mostrarPagina(numeroPagina){
         
         $("#paginador li.active").removeClass("active");        
         $("#paginador").find("a[data-num='" + numeroPagina + "']").parent("li").addClass("active");
+        
+        // Asignamos los eventos
+        $("#tablaResultados tbody tr").on("click", function() {
+            mostrarInfoCurso(Number($(this).data("id")));
+        });
     }    
+}
+
+function mostrarInfoCurso(id){
+    $.ajax({
+        type: "GET",
+        url: "/cursos/" + id,
+
+        success: function (data, textStatus, jqXHR ) {   
+            $("#infoCurso h3").text(data.Titulo);
+            $("#infoCurso div.modal-body").text(data.Descripcion);
+            $("#infoCurso").modal("show");   
+        },
+
+        error: function (jqXHR, textStatus, errorThrown ) {
+            alert( "Se ha producido un error: " + textStatus);
+        }
+    });
 }
