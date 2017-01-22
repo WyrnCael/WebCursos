@@ -3,10 +3,10 @@
 <html lang="es">
   <head>
     <title>Portal de cursos</title>
-    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/infoCurso.css">
     <link rel="stylesheet" href="./css/bootstrap.min.css">
-    <script src="./js/jquery-3.1.1.js"></script>
-    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/external/jquery-3.1.1.js"></script>
+    <script src="./js/external/bootstrap.min.js"></script>
     <script src="./js/portalCursos.js"></script>
   </head>
   <body>
@@ -42,21 +42,21 @@
         <div id="paginador" class="text-center">         
         </div>
         
-        <div class="modal fade" id="infoCurso" role="dialog">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h3></h3>
-                 </div>
-                 <div class="modal-body">
-                    
+        <div class="modal fade" id="infoCurso" tabindex="-1" role="dialog" aria-labelledby="cursoModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">                       
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>    
+                       <h3 class="modal-title" id="cursoModal"></h3>
+                    </div>
+                   <div class="modal-body">
+                   </div>
+                   <div class="modal-footer">
+                       <a href="#" data-dismiss="modal" class="btn btn-default">Cerrar</a>
+                       <a href="#" class="btn btn-primary">Inscribirse</a>
+                   </div>
                 </div>
-                 <div class="modal-footer">
-                    <a href="#" data-dismiss="modal" class="btn btn-default">Cerrar</a>
-                    <a href="#" class="btn btn-primary">Inscribirse</a>
-                 </div>
             </div>
-         </div>
-  </body>
+        </div>
+    </body>
 </html>
