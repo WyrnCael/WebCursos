@@ -89,7 +89,7 @@ function mostrarPagina(numeroPagina){
         var resultados = paginasResultados[numeroPagina - 1];
         resultados.forEach(function(p){
             // Insertamos los datos de cada fila
-            var nuevaFila = $("<tr data-id='" + p.Id + "'><td>" + p.Titulo + "</td>" +
+            var nuevaFila = $("<tr data-id='" + p.Id + "' style='cursor: pointer' ><td>" + p.Titulo + "</td>" +
                             "<td>" + p.Localidad + "</td>" +
                             "<td>" + formateaFecha(p.FechaInicio) + "</td>" +
                             "<td>" + formateaFecha(p.FechaFin) + "</td>" +
