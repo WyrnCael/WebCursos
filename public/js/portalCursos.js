@@ -1,24 +1,28 @@
 /* 
  * GRUPO 111 - Rubén Casado y Juan José Prieto
  */
-$(document).ready(function() {
-    $("#paginador").find("a").on("click", function() {
-        $("#resultado").text($(this).data("num"));
-    });
-    
+
+$(document).ready(function() {   
     $("#botonBuscar").on("click", function(e) {
         e.preventDefault();
         var str = $("#str").val();
-        buscar(str, 0);
+        if (str) {      
+            $("#inputBusqueda").find(".glyphicon").remove();     
+            $("#inputBusqueda").parent("div").removeClass("has-feedback has-error");
+            buscar(str, 0);
+        } else {
+            $("#inputBusqueda").append("<span class='glyphicon glyphicon-remove form-control-feedback'></span>");     
+            $("#inputBusqueda").parent("div").addClass("has-feedback has-error");
+        }       
     });
 });
 
 var paginasResultados = [];
-var paginaActual = 1;
 
 function buscar(str, pagina){
     if(pagina === 0) paginasResultados = [];
     
+    // Buscamos todas las paginas
     $.ajax({
             type: "GET",
             url: "/cursos/" + str + "/5/" + (5*pagina),
@@ -32,7 +36,6 @@ function buscar(str, pagina){
             },
 
             error: function (jqXHR, textStatus, errorThrown ) {
-                console.log("2");
                 alert( "Se ha producido un error: " + textStatus);
             }
        });
@@ -40,7 +43,7 @@ function buscar(str, pagina){
 
 function manejaResultados(){
     // Mostramos los resultados de la primera pagina    
-    $("#tablaResultado").text(paginasResultados[0][0].Titulo);
+    mostrarPagina(1);
     
     // Inicializamos el paginador
     $("#paginador").find("ul").remove();
@@ -60,4 +63,40 @@ function manejaResultados(){
             paginador.append(nuevaPagina);
         }        
     });    
+    
+    // Asignamos los eventos
+    $("#paginador a").on("click", function() {
+        mostrarPagina(Number($(this).data("num")));
+    });
+}
+
+function mostrarPagina(numeroPagina){
+    // Borramos la pagina anterior
+    $("#tablaResultados").find("tr").remove();
+    
+    if(paginasResultados.length === 0){
+        $("#tablaResultados").find("thead").append("<tr><th>No se han encontrado resultados.</th></tr>");
+    } else {
+        // Titulo tabla
+        var titulos = $("<tr><th>Nombre</th>" +
+                            "<th>Lugar</th>" +
+                            "<th>Inicio</th>" +
+                            "<th>Fin</th>" +
+                            "<th>Vacantes</th>");
+            $("#tablaResultados").find("thead").append(titulos);
+
+        // Resultados
+        var resultados = paginasResultados[numeroPagina - 1];
+        resultados.forEach(function(p){
+            var nuevaFila = $("<tr><td>" + p.Titulo + "</td>" +
+                            "<td>" + p.Localidad + "</td>" +
+                            "<td>" + p.FechaInicio + "</td>" +
+                            "<td>" + p.FechaFin + "</td>" +
+                            "<td>3</td></tr>");
+            $("#tablaResultados").find("tBody").append(nuevaFila);
+        });
+        
+        $("#paginador li.active").removeClass("active");        
+        $("#paginador").find("a[data-num='" + numeroPagina + "']").parent("li").addClass("active");
+    }    
 }

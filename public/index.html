@@ -16,10 +16,12 @@
             <div class="form-group">
                 <label for="str">
                 Búsqueda por nombre:</label>
-                <input class="form-control"
-                    id="str"
-                    placeholder="Introduce el nombre de un curso"
-                    type="text">                
+                <div class="input-group" id="inputBusqueda">
+                    <input class="form-control"
+                        id="str"
+                        placeholder="Curso a buscar"
+                        type="text">
+                </div>
             </div>
             <div class="form-group">
                 <button class="btn btn-primary" id="botonBuscar">
@@ -27,31 +29,17 @@
             </div>       
         </form>
         
-        <div id="tablaResultado" class="table-responsive">
+        <div id="tablaResultados" class="table-responsive">
             <table class="table">
             <thead>
-                <tr>
-                <th>Nombre</th>
-                <th>Lugar</th>
-                <th>Inicio</th>
-                <th>Fin</th>
-                <th>Vacantes</th>
-                </tr>
             </thead>
-            <tbody>
-                <tr>
-                <td>El mejor curso</td>
-                <td>Madrid</td>
-                <td>11/12/2017</td>
-                <td>12/12/2017</td>
-                <td>5</td>
-                </tr>
+            <tbody>               
             </tbody>
             </table>
         </div>
         
         
-        <div id="paginador">         
+        <div id="paginador" class="text-center">         
         </div>
   </body>
 </html>
