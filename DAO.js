@@ -144,6 +144,8 @@ function selectCurso(idCurso, callback){
                     callback(err);
                 } else {
                     if(rows[0]){
+                        rows[0].FechaInicio = formateaFecha(rows[0].FechaInicio);
+                        rows[0].FechaFin = formateaFecha(rows[0].FechaFin);
                         selectHorariosCurso(rows[0], callback);
                     } else{
                         callback(null, -1);
@@ -178,13 +180,17 @@ function searchByNameCurso(datosBusqueda, callback){
     if (err) {
         callback(err);
     } else {
-        con.query("SELECT * FROM Cursos WHERE Titulo LIKE ? ORDER BY FechaInicio ASC LIMIT ?, ?", 
+        con.query("SELECT Id, Titulo, Localidad, FechaInicio, FechaFin FROM Cursos WHERE Titulo LIKE ? ORDER BY FechaInicio ASC LIMIT ?, ?", 
                     ['%' + datosBusqueda.str + '%', Number(datosBusqueda.pos), Number(datosBusqueda.num)],
             function(err, rows) { 
                 con.release();                
                 if (err) {
                     callback(err);
                 } else {
+                    rows.forEach(function(p){
+                        p.FechaInicio = formateaFecha(p.FechaInicio);
+                        p.FechaFin = formateaFecha(p.FechaFin);
+                    });                    
                     callback(null, rows);
                 }                
             });
@@ -273,6 +279,61 @@ function login(usuario, callback){
     });
 }
 
+function inscribirUsuarioEnCurso(idUsuario, idCurso, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("INSERT INTO UsuariosEnCursos(IdUsuario, IdCurso)" + 
+                       " VALUES (?, ?)", [idUsuario, idCurso],
+            function(err, rows) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    callback(null);
+                }                
+            });
+        }
+    });
+}
+
+function getCursosUsuario(idUsuario, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("SELECT * FROM UsuariosEnCursos WHERE IdUsuario = ?", 
+                    [idUsuario],
+            function(err, rows) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    rows.forEach(function(c, index, array){
+                        selectCurso(c.IdCurso, function(err, datosCurso){
+                            if(err){
+                                callback(err);
+                            } else {
+                                c.DatosCurso = datosCurso;
+                                if(index === array.length - 1){
+                                    callback(null, rows);
+                                }
+                            }
+                        });                        
+                    });                    
+                }                
+            });
+        }
+    });
+}
+
+
+function formateaFecha(mySQLDate){
+    var fechaFormateada = ('0' + Number(mySQLDate.getDate())).slice(-2) + "/" + ('0' + Number(mySQLDate.getMonth()+1)).slice(-2) + "/" + mySQLDate.getFullYear();    
+    return fechaFormateada;
+}
+
 module.exports = {
     insertCurso: insertCurso,
     updateCurso: updateCurso,
@@ -282,5 +343,7 @@ module.exports = {
     insertarImagenCurso: insertarImagenCurso,
     selectImagenCurso: selectImagenCurso,
     insertUsuario: insertUsuario,
-    login: login
+    login: login,
+    inscribirUsuarioEnCurso: inscribirUsuarioEnCurso,
+    getCursosUsuario: getCursosUsuario
 };

@@ -19,12 +19,12 @@ passport.use(new passportHTTP.BasicStrategy(
         var usuario = {
             Correo: correo,
             Password: pass
-        }
+        };
         DAO.login(usuario, function(err, datos){
             if(err){
                 callback(null, false);
             } else {
-                callback(null, { Id: datos.Id });
+                callback(null, datos);
             }
         });
     }
@@ -46,8 +46,33 @@ routerUsuarios.post("/", function(req, res) {
     });
 });
 
-routerUsuarios.get("/:id", passport.authenticate('basic', {session: false}), function(req, res) {
-    res.json({permitido: true}); 
+routerUsuarios.get("/", passport.authenticate('basic', {session: false}), function(req, res) {
+    res.json({permitido: true});
+});
+
+routerUsuarios.post("/inscripcion", passport.authenticate('basic', {session: false}), function(req, res) {
+    DAO.inscribirUsuarioEnCurso(req.user.Id, req.body.Id, function(err){
+        if(err){
+            res.status(500);
+            res.json(err);
+        } else {
+            var r = {};
+           r.Exito = "Curso añadido con exito";
+           res.status(201);
+           res.json(r);
+        }
+    });
+});
+
+routerUsuarios.get("/cursos", passport.authenticate('basic', {session: false}), function(req, res) {
+    DAO.getCursosUsuario(req.user.Id, function(err, cursos){
+        if(err){
+            res.status(404);
+            res.end();
+        } else {
+            res.json(cursos);
+        }        
+    });
 });
 
 module.exports = routerUsuarios;

@@ -3,60 +3,31 @@
 <html lang="es">
   <head>
     <title>Portal de cursos</title>
+    <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/infoCurso.css">
     <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="./js/external/require.js" data-main="js/navegacion" ></script>
     <script src="./js/external/jquery-3.1.1.js"></script>
-    <script src="./js/external/bootstrap.min.js"></script>
-    <script src="./js/portalCursos.js"></script>
+    <script src="./js/external/bootstrap.min.js"></script>  
   </head>
   <body>
-        <h1>Búsqueda de cursos</h1>
-        
-        <form class="form-inline" role="form">
-            <div class="form-group">
-                <label for="str">
-                Búsqueda por nombre:</label>
-                <div class="input-group" id="inputBusqueda">
-                    <input class="form-control"
-                        id="str"
-                        placeholder="Curso a buscar"
-                        type="text">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                  <a class="navbar-brand" href="#">Portal de cursos</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-left">
+                      <li class="active" id="buscarCursos"><a href="#">Buscar cursos</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><button class="btn btn-default navbar-btn" id="botonIdentificarse">Identificarse</button></li>
+                    </ul>
                 </div>
             </div>
-            <div class="form-group">
-                <button class="btn btn-primary" id="botonBuscar">
-                <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Buscar</button>               
-            </div>       
-        </form>
+        </nav>
         
-        <div id="tablaResultados" class="table-responsive">
-            <table class="table  table-hover">
-            <thead>
-            </thead>
-            <tbody>               
-            </tbody>
-            </table>
-        </div>
-        
-        
-        <div id="paginador" class="text-center">         
-        </div>
-        
-        <div class="modal fade" id="infoCurso" tabindex="-1" role="dialog" aria-labelledby="cursoModal" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">                       
-                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>    
-                       <h3 class="modal-title" id="cursoModal"></h3>
-                    </div>
-                   <div class="modal-body">
-                   </div>
-                   <div class="modal-footer">
-                       <a href="#" data-dismiss="modal" class="btn btn-default">Cerrar</a>
-                       <a href="#" class="btn btn-primary">Inscribirse</a>
-                   </div>
-                </div>
-            </div>
+        <div id="panelCentral">            
         </div>
     </body>
 </html>
