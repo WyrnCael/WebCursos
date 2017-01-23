@@ -160,7 +160,7 @@ function obtenerImagen(id){
             success: function (data, textStatus, jqXHR ) {   
                 $("#imagenCurso img").remove();
                 // Volvemos a poner la direccion con src y no con los datos devueltos dado
-                // que al no saber el formato (png, jpeg, gif...) no podemos "encodearlo" en
+                // que al no saber el formato (png, jpeg, gif...) no sabemos "encodearlo" en
                 // base64.
                 $("#imagenCurso").append("<img src='/cursos/" + id + "/imagen/' width='128' height='128' />");
             },

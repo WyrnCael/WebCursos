@@ -230,6 +230,26 @@ function selectImagenCurso(idCurso, callback){
     });
 }
 
+function insertUsuario(usuario, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("INSERT INTO Usuarios(Correo, Password, Nombre, Apellidos, Sexo, FechaNacimiento)" + 
+                       " VALUES (?, ?, ?, ?, ?, ?)", [usuario.Correo, usuario.Password,
+                        usuario.Nombre, usuario.Apellidos, usuario.Sexo, usuario.FechaNacimiento],
+            function(err, rows) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    callback(null);
+                }                
+            });
+        }
+    });
+}
+
 module.exports = {
     insertCurso: insertCurso,
     updateCurso: updateCurso,
@@ -237,5 +257,6 @@ module.exports = {
     selectCurso: selectCurso,
     searchByNameCurso: searchByNameCurso,
     insertarImagenCurso: insertarImagenCurso,
-    selectImagenCurso: selectImagenCurso
+    selectImagenCurso: selectImagenCurso,
+    insertUsuario: insertUsuario
 };
