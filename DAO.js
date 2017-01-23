@@ -250,6 +250,29 @@ function insertUsuario(usuario, callback){
     });
 }
 
+function login(usuario, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        var sql = "SELECT * FROM Usuarios WHERE Correo = ? AND Password = ?";
+        con.query(sql, [usuario.Correo, usuario.Password],
+            function(err, rows) { 
+                con.release();
+                if (err) {
+                    callback(err);
+                } else {
+                    if(rows[0] === undefined){
+                        callback(-1);
+                    } else{
+                        callback(null, rows[0]); 
+                    }                   
+                }                
+            });
+        }
+    });
+}
+
 module.exports = {
     insertCurso: insertCurso,
     updateCurso: updateCurso,
@@ -258,5 +281,6 @@ module.exports = {
     searchByNameCurso: searchByNameCurso,
     insertarImagenCurso: insertarImagenCurso,
     selectImagenCurso: selectImagenCurso,
-    insertUsuario: insertUsuario
+    insertUsuario: insertUsuario,
+    login: login
 };
