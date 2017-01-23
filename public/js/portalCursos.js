@@ -51,16 +51,19 @@ function manejaResultados(){
     var paginador = $("#paginador").append("<ul class='pagination pagination-sm'></ul>").find("ul");
     paginasResultados.forEach(function(pagina, index, array) {
         if(index === 0){
-            var paginaInicial = $("<li class='disabled'><span>&laquo;</span></li>" + 
-                    "<li class='active'><a href='#' data-num='" + (index+1) + "'>" + (index+1) + "</a></li>");
-            paginador.append(paginaInicial);
+            var paginaInicial = $("<li class='disabled'><span>&laquo;</span></li>" +
+                                "<li class='active'><a href='#' data-num='" + (index+1) + "'>" + (index+1) + "</a></li>");
+            paginador.append(paginaInicial);        
         } else {
             var nuevaPagina = $("<li><a href='#' data-num='" + (index+1) + "'>" + (index+1) + "</a></li>");
             paginador.append(nuevaPagina);
         }        
+        if(index === array.length - 1){
+            var paginaFinal = $("<li class='disabled'><span>&raquo;</span></li>");
+            paginador.append(paginaFinal);  
+        }
     });    
-    var paginaFinal = $("<li class='disabled'><span>&raquo;</span></li>");
-    paginador.append(paginaFinal);
+    
     
     // Asignamos los eventos
     $("#paginador a").on("click", function() {
@@ -130,9 +133,9 @@ function mostrarInfoCurso(id){
             cuerpo += "</p><p class='tituloCuerpo'>Numero de plazas:</p>" + 
                         "<p>" + data.NumPlazas + " (X vacantes)</p>";
             cuerpo += "</div>";
-            cuerpo += "<div id='imagenCurso'><img src='/cursos/" + data.Id + "/imagen'/ width='128' height='128' ></div></div>";
-            $("#infoCurso div.modal-body").append(cuerpo);
-            
+            cuerpo += "<div id='imagenCurso'></div></div>";
+            obtenerImagen(data.Id);
+            $("#infoCurso div.modal-body").append(cuerpo);            
             $("#infoCurso").modal("show");   
         },
 
@@ -147,4 +150,23 @@ function formateaFecha(mySQLDate){
     var fecha = new Date(dateParts[0], dateParts[1] - 1, dateParts[2].substr(0,2));
     var fechaFormateada = ('0' + Number(fecha.getDate()+1)).slice(-2) + "/" + ('0' + Number(fecha.getMonth()+1)).slice(-2) + "/" + fecha.getFullYear();    
     return fechaFormateada;
+}
+
+function obtenerImagen(id){    
+    $.ajax({
+            type: "GET",
+            url: "/cursos/" + id + "/imagen/",
+
+            success: function (data, textStatus, jqXHR ) {   
+                $("#imagenCurso img").remove();
+                // Volvemos a poner la direccion con src y no con los datos devueltos dado
+                // que al no saber el formato (png, jpeg, gif...) no podemos "encodearlo" en
+                // base64.
+                $("#imagenCurso").append("<img src='/cursos/" + id + "/imagen/' width='128' height='128' />");
+            },
+
+            error: function (jqXHR, textStatus, errorThrown ) {
+                $("#imagenCurso img").remove();
+            }
+       });
 }

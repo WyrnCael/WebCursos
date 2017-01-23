@@ -222,7 +222,8 @@ function selectImagenCurso(idCurso, callback){
                 if (err) {
                     callback(err);
                 } else {
-                    callback(null, rows[0].Imagen);
+                    if(rows[0].Imagen) callback(null, rows[0].Imagen);
+                    else callback("El curso no tiene imagen");
                 }                
             });
         }
