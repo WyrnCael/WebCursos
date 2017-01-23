@@ -137,7 +137,7 @@ function selectCurso(idCurso, callback){
     if (err) {
         callback(err);
     } else {
-        con.query("SELECT * FROM CURSOS WHERE Id = ?", [idCurso],
+        con.query("SELECT Id, Titulo, Descripcion, Localidad, Direccion, FechaInicio, FechaFin, NumPlazas FROM CURSOS WHERE Id = ?", [idCurso],
             function(err, rows) { 
                 con.release();                
                 if (err) {
@@ -192,10 +192,49 @@ function searchByNameCurso(datosBusqueda, callback){
     });
 }
 
+function insertarImagenCurso(curso, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("UPDATE Cursos SET Imagen=? WHERE Id=?",
+                [curso.Imagen, curso.Id],
+            function(err, rows) { 
+                con.release();
+                if (err) {
+                    callback(err);
+                } else {
+                   callback(null);
+                }                
+            });
+        }
+    });
+}
+
+function selectImagenCurso(idCurso, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("SELECT Imagen FROM CURSOS WHERE Id = ?", [idCurso],
+            function(err, rows) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    callback(null, rows[0].Imagen);
+                }                
+            });
+        }
+    });
+}
+
 module.exports = {
     insertCurso: insertCurso,
     updateCurso: updateCurso,
     removeCurso: removeCurso,
     selectCurso: selectCurso,
-    searchByNameCurso: searchByNameCurso
+    searchByNameCurso: searchByNameCurso,
+    insertarImagenCurso: insertarImagenCurso,
+    selectImagenCurso: selectImagenCurso
 };

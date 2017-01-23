@@ -4,6 +4,8 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var path = require("path");
+var multer = require("multer");
+var upload = multer({ storage: multer.memoryStorage() });
 var DAO = require('./DAO.js');
 var config = require('./config.js');
 
@@ -98,6 +100,36 @@ app.get("/cursos/:str/:num/:pos", function(req, res){
            res.json(JSON.stringify(r));
        }
        res.end();
+   });
+});
+
+app.put("/cursos/:id/imagen", upload.single("imagen"), function(req, res){
+   var id = Number(req.params.id);
+   var curso = req.body;
+   curso.Id = id;
+   curso.Imagen = req.file.buffer;
+   DAO.insertarImagenCurso(curso, function(err, r){
+       if(err){
+           res.status(500);
+           res.json(err);
+       } else {
+           res.status(200);
+       }
+       res.end();
+   });
+});
+
+app.get("/cursos/:id/imagen", function(req, res){
+   var id = Number(req.params.id);
+   
+    DAO.selectImagenCurso(id, function(err, imagen){
+       if(err){
+            res.status(404);
+            res.end();
+       } else {
+            res.status(200);
+            res.end(imagen, 'binary');
+       }
    });
 });
 

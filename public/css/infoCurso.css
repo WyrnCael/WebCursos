@@ -8,7 +8,16 @@ and open the template in the editor.
     Author     : Jota
 */
 #cuerpo{
-    
+    display: inline-block;
+    width: 100%;
+}
+
+#textoCuerpo{
+    float: left;
+}
+
+#imagenCurso{
+    float: right;
 }
 
 .tituloCuerpo{

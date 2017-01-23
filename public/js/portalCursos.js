@@ -54,15 +54,13 @@ function manejaResultados(){
             var paginaInicial = $("<li class='disabled'><span>&laquo;</span></li>" + 
                     "<li class='active'><a href='#' data-num='" + (index+1) + "'>" + (index+1) + "</a></li>");
             paginador.append(paginaInicial);
-        } else if(index === array.length - 1) {
-            var paginaFinal = $("<li><a href='#' data-num='" + (index+1) + "'>" + (index+1) + "</a></li>" + 
-                    "<li class='disabled'><span>&raquo;</span></li>");
-            paginador.append(paginaFinal);
         } else {
             var nuevaPagina = $("<li><a href='#' data-num='" + (index+1) + "'>" + (index+1) + "</a></li>");
             paginador.append(nuevaPagina);
         }        
     });    
+    var paginaFinal = $("<li class='disabled'><span>&raquo;</span></li>");
+    paginador.append(paginaFinal);
     
     // Asignamos los eventos
     $("#paginador a").on("click", function() {
@@ -114,26 +112,25 @@ function mostrarInfoCurso(id){
 
         success: function (data, textStatus, jqXHR ) {   
             $("#infoCurso .modal-title").text(data.Titulo);
-            console.log(data);
+            
             $("#infoCurso div.modal-body").find("*").remove();
-            var cuerpo = $("<div id='cuerpo'><p>" + data.Descripcion + "</p>" +
+            var cuerpo = "<div id='cuerpo'><div id='textoCuerpo'><p>" + data.Descripcion + "</p>" +
                         "<p class='tituloCuerpo'>Lugar de impartición:</p>" +
                         "<p>" + data.Direccion + "</p>" +
                         "<p class='tituloCuerpo'>Ciudad:</p>" + 
                         "<p>" + data.Localidad + "</p>" +
                         "<p class='tituloCuerpo'>Duración:</p>" +
                         "<p>Desde el " + formateaFecha(data.FechaInicio) + " hasta el " + formateaFecha(data.FechaFin) + "</p>" +
-                        "<p class='tituloCuerpo'>Horario:</p>" );
-            var horarios = "";
+                        "<p class='tituloCuerpo'>Horario:</p><p>";
             data.Horarios.forEach(function(p, index, array){
-                if(index > 0) horarios += ", ";
-                horarios += p.Dia + ": " + p.HoraInicio.substring(0,5) + " - " + p.HoraFin.substring(0,5); 
+                if(index > 0) cuerpo += ", ";
+                cuerpo += p.Dia + ": " + p.HoraInicio.substring(0,5) + " - " + p.HoraFin.substring(0,5); 
                 
             });
-            cuerpo.append("<p>" + horarios + "</p>");
-            cuerpo.append("<p class='tituloCuerpo'>Numero de plazas:</p>" + 
-                        "<p>" + data.NumPlazas + " (X vacantes)</p>");
-            cuerpo.append("</div>");
+            cuerpo += "</p><p class='tituloCuerpo'>Numero de plazas:</p>" + 
+                        "<p>" + data.NumPlazas + " (X vacantes)</p>";
+            cuerpo += "</div>";
+            cuerpo += "<div id='imagenCurso'><img src='/cursos/" + data.Id + "/imagen'/ width='128' height='128' ></div></div>";
             $("#infoCurso div.modal-body").append(cuerpo);
             
             $("#infoCurso").modal("show");   
