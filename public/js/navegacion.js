@@ -11,7 +11,7 @@ requirejs.config({
     }
 });
 
-define(["cursos", "jquery"], function(buscar, $) {
+define(["cursos", "usuarios", "jquery"], function(buscar, usuarios, $) {
     $(document).ready(function() {   
         mostrarBuscarCursos();
         
@@ -33,7 +33,7 @@ define(["cursos", "jquery"], function(buscar, $) {
             "<form class='form-inline' role='form'>" +
                 "<div class='form-group'>" +
                     "<label for='str'>" +
-                    "Búsqueda por nombre:</label>" +
+                    "Búsqueda por nombre:&nbsp;&nbsp;</label>" +
                     "<div class='input-group' id='inputBusqueda'>" +
                         "<input class='form-control'" +
                             "id='str'" +
@@ -89,6 +89,119 @@ define(["cursos", "jquery"], function(buscar, $) {
 
     function mostrarIdentificarse(){
         $("#panelCentral").find("*").remove();
+        
+        var panel = $("<h1>Identificación</h1>" +
+            "<form role='form' id='formIdent'>" +
+                "<div class='form-group'>" +
+                    "<label for='correo'>" +
+                    "Dirección de correo:</label>" +
+                    "<div class='input-group col-sm-12' id='inputIdentificacion'>" +
+                        "<input class='form-control'" +
+                            "id='correo'" +
+                            "placeholder='ejemplo@ejemplo.com'" +
+                            "type='text'>" +
+                    "</div></div>" +
+                "<div class='form-group'>" +
+                    "<label for='password'>" +
+                    "Contraseña:</label>" +
+                    "<div class='input-group col-sm-12' id='inputIdentificacion'>" +
+                        "<input class='form-control'" +
+                            "id='password'" +
+                            "placeholder='****'" +
+                            "type='password'>" +
+                    "</div></div>" + 
+                "<div class='form-group'>" +
+                    "<div id='botonesRegistro' class='input-group'>" +
+                        "<button class='btn btn-primary' id='botonLogin'>Identificarse</button>" +
+                        "<button class='btn btn-link' id='botonRegistro'>Crear nueva cuenta</button>" +
+                    "</div></div>" +
+                "</div>" +
+            "</form>");
+        
+        $("#panelCentral").append(panel);
+        
+        $("#botonLogin").on("click", function(e) {
+            e.preventDefault();
+            var correo = $("#correo").val();
+            var password = $("#password").val();
+            usuarios.login(correo, password);
+        });
+        
+        $("#botonRegistro").on("click", function(e) {
+            e.preventDefault();
+            mostrarNuevoRegistro();                
+        });
+    }
+    
+    function mostrarNuevoRegistro(){
+        $("#panelCentral").find("*").remove();
+        
+        var panel = $("<h1>Nuevo usuario</h1>" +
+            "<form class='form-horizontal' role='form'>" +
+                "<div class='form-group'>" +
+                    "<label class='contol-label col-sm-2' for='correo'>" +
+                    "Dirección de correo</label>" +
+                    "<div class='col-sm-10' id='inputIdentificacion'>" +
+                        "<input class='form-control'" +
+                            "id='correo'" +
+                            "placeholder='ejemplo@ejemplo.com'" +
+                            "type='text'>" +
+                    "</div></div>" + 
+                "<div class='form-group'>" +
+                    "<label class='contol-label col-sm-2' for='password'>" +
+                    "Contraseña</label>" +
+                    "<div class='col-sm-10' id='inputIdentificacion'>" +
+                        "<input class='form-control'" +
+                            "id='password'" +
+                            "placeholder='****'" +
+                            "type='password'>" +
+                    "</div></div>" +
+                "<div class='form-group'>" +
+                    "<label class='contol-label col-sm-2' for='nombre'>" +
+                    "Nombre</label>" +
+                    "<div class='col-sm-10' id='inputIdentificacion'>" +
+                        "<input class='form-control'" +
+                            "id='nombre'" +
+                            "placeholder='Pepito'" +
+                            "type='text'>" +
+                    "</div></div>" + 
+                "<div class='form-group'>" +
+                    "<label class='contol-label col-sm-2' for='apellidos'>" +
+                    "Apellidos</label>" +
+                    "<div class='col-sm-10' id='inputIdentificacion'>" +
+                        "<input class='form-control'" +
+                            "id='apellidos'" +
+                            "placeholder='Grillo'" +
+                            "type='text'>" +
+                    "</div></div>" + 
+                "<div class='form-group'>" +
+                    "<label class='contol-label col-sm-2' for='sexo'>" +
+                    "Sexo</label>" +
+                    "<div class='col-sm-10' id='inputIdentificacion'>" +
+                        "<label class='radio-inline'>" +
+                            "<input type='radio' id='sexo' name='optradio'>Hombre" +
+                        "</label>" +
+                        "<label class='radio-inline'>" +
+                            "<input type='radio' id='sexo' name='optradio'>Mujer" +
+                        "</label>" +
+                    "</div></div>" + 
+                "<div class='form-group'>" +
+                    "<label class='contol-label col-sm-2' for='fNacimiento'>" +
+                    "Fecha nacimiento</label>" +
+                    "<div class='col-sm-10' id='inputIdentificacion'>" +
+                        "<input class='form-control'" +
+                            "id='fNacimiento'" +
+                            "placeholder='dd/mm/aaaa'" +
+                            "type='text'>" +
+                    "</div></div>" + 
+                "<div class='form-group'>" +
+                    "<div id='botonesRegistro' class='input-group'>" +
+                        "<button class='btn btn-primary' id='botonCrearUsuario'>Crear nuevo usuario</button>" +
+                    "</div>" +
+                "</div></div>" +
+            "</form>");
+        
+        $("#panelCentral").append(panel);
     }
     
     return;

@@ -22,7 +22,7 @@ passport.use(new passportHTTP.BasicStrategy(
         };
         DAO.login(usuario, function(err, datos){
             if(err){
-                callback(null, false);
+                callback(err);
             } else {
                 callback(null, datos);
             }
