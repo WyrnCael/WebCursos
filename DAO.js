@@ -138,7 +138,12 @@ function selectCurso(idCurso, callback){
     if (err) {
         callback(err);
     } else {
-        con.query("SELECT Id, Titulo, Descripcion, Localidad, Direccion, FechaInicio, FechaFin, NumPlazas FROM CURSOS WHERE Id = ?", [idCurso],
+        con.query("SELECT Cursos.Id, Titulo, Descripcion, Localidad, Direccion, FechaInicio, FechaFin, NumPlazas, COUNT(*) AS Inscritos FROM CURSOS" + 
+                    " INNER JOIN UsuariosEnCursos" +
+                    " ON Cursos.Id = UsuariosEnCursos.IdCurso" +
+                    " GROUP BY Cursos.Id" +
+                    " HAVING Cursos.Id = ?", 
+            [idCurso],
             function(err, rows) { 
                 con.release();                
                 if (err) {
@@ -147,6 +152,7 @@ function selectCurso(idCurso, callback){
                     if(rows[0]){
                         rows[0].FechaInicio = formateaFechaSalida(rows[0].FechaInicio);
                         rows[0].FechaFin = formateaFechaSalida(rows[0].FechaFin);
+                        rows[0].Vacantes = Number(rows[0].NumPlazas) - Number(rows[0].Inscritos);
                         selectHorariosCurso(rows[0], callback);
                     } else{
                         callback(null, -1);

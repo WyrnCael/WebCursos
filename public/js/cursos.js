@@ -101,7 +101,7 @@ define(["usuarios"], function(usuarios) {
 
             success: function (data, textStatus, jqXHR ) {   
                 $("#infoCurso .modal-title").text(data.Titulo);
-
+                
                 $("#infoCurso div.modal-body").find("*").remove();
                 var cuerpo = "<div id='cuerpo'><div id='textoCuerpo'><p>" + data.Descripcion + "</p>" +
                             "<p class='tituloCuerpo'>Lugar de impartición:</p>" +

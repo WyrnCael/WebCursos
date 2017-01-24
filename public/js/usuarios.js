@@ -167,9 +167,9 @@ define([], function() {
                     
                     $("#misCursos").on("click", function(e) {
                         e.preventDefault();
-                        mostrarCursosUsuario();
                         $("#buscarCursos").removeClass("active");
                         $("#misCursos").addClass("active");
+                        mostrarCursosUsuario();                        
                     });
                 }
             },
@@ -286,11 +286,18 @@ define([], function() {
                 "Basic " + cadenaBase64);
             },
             success: function(data, state, jqXHR) {
-                if (data.permitido) {
-                    console.log("¡Acceso permitido!");                    
-                    
-                    console.log(data);
-                }
+                
+                data.forEach(function(c){
+                // Insertamos los datos de cada fila
+                var nuevaFila = $("<tr data-id='" + c.DatosCurso.Id + "' style='cursor: pointer' ><td>" + c.DatosCurso.Titulo + "</td>" +
+                                "<td>" + c.DatosCurso.Localidad + "</td>" +
+                                "<td>" + c.DatosCurso.FechaInicio + "</td>" +
+                                "<td>" + c.DatosCurso.FechaFin + "</td></tr>");
+                var fechaInicio = new Date(Number(c.DatosCurso.FechaInicio.substring(6,10)), Number(c.DatosCurso.FechaInicio.substring(3,5)) - 1, Number(c.DatosCurso.FechaInicio.substring(0,2)));
+                var fechaActual = new Date();
+                if(fechaInicio > fechaActual) $("#tablaProximosCursos").find("tBody").append(nuevaFila);
+                else $("#tablaCursosActuales").find("tBody").append(nuevaFila);
+            });
             },
             error: function (jqXHR, textStatus, errorThrown ) {
                 console.log("¡Acceso denegado!");
