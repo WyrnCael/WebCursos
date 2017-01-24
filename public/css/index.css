@@ -25,5 +25,9 @@ div.navbar-header{
 
 .col-sm-2{
     text-align: right;
-    vertical-align: center;
+    vertical-align: middle;
+}
+
+#datosUser{
+    padding-top: 14px;
 }
