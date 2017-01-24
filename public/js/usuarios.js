@@ -39,6 +39,9 @@ define([], function() {
         
         $("#panelCentral").append(panel);
         
+        $("#buscarCursos").removeClass("active");
+        $("#misCursos").removeClass("active");
+        
         $("#botonLogin").on("click", function(e) {
             e.preventDefault();
             var correo = $("#correo").val();
@@ -154,11 +157,19 @@ define([], function() {
                     var datosUsuario = $("<li id='datosUser'>" + correo + "</li>");
                     $("#navDerecha").append(datosUsuario);
                     var botonDesconectar = $("<li><button class='btn btn-default navbar-btn' id='botonDesconectar'>Desconectarse</button></li>");
-                    $("#navDerecha").append(botonDesconectar);
+                    $("#navDerecha").append(botonDesconectar);                    
+                    $("#navIzquierda").append("<li id='misCursos'><a href='#'>Mis cursos</a></li>");                    
                     
                     $("#botonDesconectar").on("click", function(e) {
                         e.preventDefault();
                         desconectar();                
+                    });
+                    
+                    $("#misCursos").on("click", function(e) {
+                        e.preventDefault();
+                        mostrarCursosUsuario();
+                        $("#buscarCursos").removeClass("active");
+                        $("#misCursos").addClass("active");
                     });
                 }
             },
@@ -201,6 +212,7 @@ define([], function() {
         $("#navDerecha").find("li").remove();
         var botonConectar = $("<li><button class='btn btn-default navbar-btn' id='botonIdentificarse'>Identificarse</button></li>");
         $("#navDerecha").append(botonConectar);
+        $("#misCursos").remove();
         
         $("#botonIdentificarse").on("click", function(e) {
             e.preventDefault();        
@@ -224,6 +236,64 @@ define([], function() {
             },
             error: function (jqXHR, textStatus, errorThrown ) {
                 console.log("¡Error al inscribirse!");
+            }
+                    
+        });
+    }
+    
+    function mostrarCursosUsuario(){
+        $("#panelCentral").find("*").remove();
+
+        var panelProximos = $("<h1>Próximos cursos</h1>" +
+            "<div id='tablaProximosCursos' class='table-responsive'>" +
+                "<table class='table  table-hover'>" +
+                "<thead>" +
+                    "<tr><th>Nombre</th>" +
+                        "<th>Lugar</th>" +
+                        "<th>Inicio</th>" +
+                        "<th>Fin</th></tr>" +
+                "</thead>" +
+                "<tbody>               " +
+                "</tbody>" +
+                "</table>" +
+            "</div>");
+        $("#panelCentral").append(panelProximos); 
+        
+        var panelActuales = $("<h1>Cursos realizados</h1>" +
+            "<div id='tablaCursosActuales' class='table-responsive'>" +
+                "<table class='table  table-hover'>" +
+                "<thead>" +
+                    "<tr><th>Nombre</th>" +
+                        "<th>Lugar</th>" +
+                        "<th>Inicio</th>" +
+                        "<th>Fin</th></tr>" +
+                "</thead>" +
+                "<tbody>               " +
+                "</tbody>" +
+                "</table>" +
+            "</div>");
+        $("#panelCentral").append(panelActuales); 
+        
+        buscarYMostrarCursos();
+    }
+    
+    function buscarYMostrarCursos(){
+        $.ajax({
+            method: "GET",
+            url: "/usuarios/cursos",
+            beforeSend: function(req) {
+                req.setRequestHeader("Authorization",
+                "Basic " + cadenaBase64);
+            },
+            success: function(data, state, jqXHR) {
+                if (data.permitido) {
+                    console.log("¡Acceso permitido!");                    
+                    
+                    console.log(data);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown ) {
+                console.log("¡Acceso denegado!");
             }
                     
         });

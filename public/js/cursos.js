@@ -69,7 +69,7 @@ define(["usuarios"], function(usuarios) {
                                 "<th>Lugar</th>" +
                                 "<th>Inicio</th>" +
                                 "<th>Fin</th>" +
-                                "<th>Vacantes</th>");
+                                "<th>Vacantes</th></tr>");
                 $("#tablaResultados").find("thead").append(titulos);
 
             // Resultados

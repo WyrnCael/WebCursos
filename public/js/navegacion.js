@@ -71,6 +71,9 @@ define(["cursos", "usuarios", "jquery"], function(buscar, usuarios, $) {
             "</div>");
         $("#panelCentral").append(panel);        
 
+        $("#misCursos").removeClass("active");
+        $("#buscarCursos").addClass("active");
+
         $("#botonBuscar").on("click", function(e) {
             e.preventDefault();
             var str = $("#str").val();
