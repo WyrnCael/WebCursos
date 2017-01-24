@@ -171,6 +171,8 @@ define([], function() {
                         $("#misCursos").addClass("active");
                         mostrarCursosUsuario();                        
                     });
+                    
+                    requirejs("navegacion").mostrarBuscarCursos();
                 }
             },
             error: function (jqXHR, textStatus, errorThrown ) {
@@ -189,7 +191,7 @@ define([], function() {
             contentType: "application/json",
             data: JSON.stringify(usuario),
             success: function(data, state, jqXHR) {
-                console.log("¡Registrado!");
+                login(usuario.Correo, usuario.Password);
             },
             error: function (jqXHR, textStatus, errorThrown ) {
                 console.log("¡No registrado!");
@@ -198,11 +200,35 @@ define([], function() {
         });
     }
     
-    function estaConectado(){
+    function estaInscrito(idCurso, vacantes){
         if(cadenaBase64){
-            return true;
+            $.ajax({
+                method: "GET",
+                url: "/usuarios/cursos",
+                beforeSend: function(req) {
+                    req.setRequestHeader("Authorization",
+                    "Basic " + cadenaBase64);
+                },
+                success: function(data, state, jqXHR) {
+                    var cursos = data.filter(function(curso){
+                       return curso.IdCurso ===  idCurso;
+                    });            
+                    
+                    if(cursos.length > 0) $(".modal-footer").append("<a href='#' disabled='disabled' class='btn btn-success' id='insritoCurso' data-id='" + idCurso + "'>Ya estás inscrito</a>");
+                    else if(vacantes === 0) $(".modal-footer").append("<a href='#' disabled='disabled' class='btn btn-danger' id='insribirSinVacantes' data-id='" + data.Id + "'>No hay vacantes</a>");
+                    else $(".modal-footer").append("<a href='#' class='btn btn-primary' id='insribirseCurso' data-id='" + idCurso + "'>Inscribirse</a>");
+                    
+                    $("#insribirseCurso").on("click", function() {
+                        incribirseEnCurso(Number($(this).data("id")));
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown ) {
+                    console.log("¡Acceso denegado!");
+                }
+
+            });            
         } else {
-            return false;
+            return -1;
         }
     }
     
@@ -212,12 +238,14 @@ define([], function() {
         $("#navDerecha").find("li").remove();
         var botonConectar = $("<li><button class='btn btn-default navbar-btn' id='botonIdentificarse'>Identificarse</button></li>");
         $("#navDerecha").append(botonConectar);
-        $("#misCursos").remove();
+        $("#misCursos").remove();        
         
         $("#botonIdentificarse").on("click", function(e) {
             e.preventDefault();        
             mostrarIdentificarse();
         });
+        
+        requirejs("navegacion").mostrarBuscarCursos();
     }
     
     function incribirseEnCurso(idCurso){
@@ -233,6 +261,8 @@ define([], function() {
             data: JSON.stringify({ Id: idCurso }),
             success: function(data, state, jqXHR) {
                 console.log("¡Incrito!");
+                $("#insribirseCurso").remove();
+                $(".modal-footer").append("<a href='#' disabled='disabled' class='btn btn-success' id='insritoCurso'>Inscrito con éxito</a>");
             },
             error: function (jqXHR, textStatus, errorThrown ) {
                 console.log("¡Error al inscribirse!");
@@ -290,7 +320,7 @@ define([], function() {
                 "</div>" +
             "</div>");
             
-        $("#panelCentral").append(modal); 
+        $("body").append(modal); 
             
         
         buscarYMostrarCursos();
@@ -348,7 +378,7 @@ define([], function() {
     
     return {
         mostrarIdentificarse: mostrarIdentificarse,
-        estaConectado: estaConectado,
+        estaInscrito: estaInscrito,
         incribirseEnCurso: incribirseEnCurso
     };
 });

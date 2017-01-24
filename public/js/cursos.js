@@ -113,23 +113,23 @@ define(["usuarios"], function(usuarios) {
                             "<p class='tituloCuerpo'>Duración:</p>" +
                             "<p>Desde el " + data.FechaInicio + " hasta el " + data.FechaFin + "</p>" +
                             "<p class='tituloCuerpo'>Horario:</p><p>";
-                data.Horarios.forEach(function(p, index, array){
-                    if(index > 0) cuerpo += ", ";
-                    cuerpo += p.Dia + ": " + p.HoraInicio.substring(0,5) + " - " + p.HoraFin.substring(0,5); 
+                if(data.Horarios !== undefined) 
+                    data.Horarios.forEach(function(p, index, array){
+                        if(index > 0) cuerpo += ", ";
+                        cuerpo += p.Dia + ": " + p.HoraInicio.substring(0,5) + " - " + p.HoraFin.substring(0,5); 
 
-                });
+                    });
                 cuerpo += "</p><p class='tituloCuerpo'>Numero de plazas:</p>" + 
                             "<p>" + data.NumPlazas + " (" + data.Vacantes + " vacantes)</p>";
                 cuerpo += "</div>";
                 cuerpo += "<div id='imagenCurso'></div></div>";
                 obtenerImagen(data.Id);
                 $("#infoCurso div.modal-body").append(cuerpo); 
-                $("#insribirseCurso").remove();
-                if(usuarios.estaConectado()) $(".modal-footer").append("<a href='#' class='btn btn-primary' id='insribirseCurso' data-id='" + data.Id + "'>Inscribirse</a>");
-                $("#insribirseCurso").on("click", function() {
-                    usuarios.incribirseEnCurso(Number($(this).data("id")));
-                });
+                $("#insribirseCurso").remove();   
+                $("#insritoCurso").remove();
+                $("#insribirSinVacantes").remove();
                 
+                usuarios.estaInscrito(data.Id, data.Vacantes);
                 
                 $("#infoCurso").modal("show");   
             },

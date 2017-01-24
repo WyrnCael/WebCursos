@@ -89,5 +89,7 @@ define(["cursos", "usuarios", "jquery"], function(cursos, usuarios, $) {
         });
     }
     
-    return;
+    return {
+        mostrarBuscarCursos: mostrarBuscarCursos
+    };
 });
