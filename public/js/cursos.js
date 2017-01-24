@@ -3,7 +3,7 @@
  */
 "use strict";
 
-define([], function() {
+define(["usuarios"], function(usuarios) {
     var paginasResultados = [];
     
     function buscar(str, pagina){
@@ -121,7 +121,14 @@ define([], function() {
                 cuerpo += "</div>";
                 cuerpo += "<div id='imagenCurso'></div></div>";
                 obtenerImagen(data.Id);
-                $("#infoCurso div.modal-body").append(cuerpo);            
+                $("#infoCurso div.modal-body").append(cuerpo); 
+                $("#insribirseCurso").remove();
+                if(usuarios.estaConectado()) $(".modal-footer").append("<a href='#' class='btn btn-primary' id='insribirseCurso' data-id='" + data.Id + "'>Inscribirse</a>");
+                $("#insribirseCurso").on("click", function() {
+                    usuarios.incribirseEnCurso(Number($(this).data("id")));
+                });
+                
+                
                 $("#infoCurso").modal("show");   
             },
 

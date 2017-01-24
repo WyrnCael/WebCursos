@@ -69,8 +69,7 @@ define(["cursos", "usuarios", "jquery"], function(buscar, usuarios, $) {
                     "</div>" +
                 "</div>" +
             "</div>");
-        $("#panelCentral").append(panel);
-        if(usuarios.estaConectado()) $(".modal-footer").append("<a href='#' class='btn btn-primary'>Inscribirse</a>");
+        $("#panelCentral").append(panel);        
 
         $("#botonBuscar").on("click", function(e) {
             e.preventDefault();

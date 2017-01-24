@@ -222,8 +222,30 @@ define([], function() {
         });
     }
     
+    function incribirseEnCurso(idCurso){
+        $.ajax({
+            method: "POST",
+            type: "POST",
+            url: "/usuarios/inscripcion",
+            contentType: "application/json",
+            beforeSend: function(req) {
+                req.setRequestHeader("Authorization",
+                "Basic " + cadenaBase64);
+            },
+            data: JSON.stringify({ Id: idCurso }),
+            success: function(data, state, jqXHR) {
+                console.log("¡Incrito!");
+            },
+            error: function (jqXHR, textStatus, errorThrown ) {
+                console.log("¡Error al inscribirse!");
+            }
+                    
+        });
+    }
+    
     return {
         mostrarIdentificarse: mostrarIdentificarse,
-        estaConectado: estaConectado
+        estaConectado: estaConectado,
+        incribirseEnCurso: incribirseEnCurso
     };
 });
