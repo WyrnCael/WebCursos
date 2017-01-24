@@ -171,8 +171,6 @@ define([], function() {
     }
     
     function registrar(usuario){
-        console.log(usuario);
-        
         $.ajax({
             method: "POST",
             type: "POST",

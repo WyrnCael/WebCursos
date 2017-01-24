@@ -310,7 +310,7 @@ function getCursosUsuario(idUsuario, callback){
     if (err) {
         callback(err);
     } else {
-        con.query("SELECT * FROM UsuariosEnCursos WHERE IdUsuario = ?", 
+        con.query("SELECT * FROM UsuariosEnCursos WHERE IdUsuario = ? ORDER BY (SELECT FechaInicio FROM Cursos WHERE IdCurso = Id)", 
                     [idUsuario],
             function(err, rows) { 
                 con.release();                
@@ -337,7 +337,6 @@ function getCursosUsuario(idUsuario, callback){
 
 
 function formateaFechaSalida(mySQLDate){
-    console.log("Mysqldate " + mySQLDate);
     var fechaFormateada = ('0' + Number(mySQLDate.getDate())).slice(-2) + "/" + ('0' + Number(mySQLDate.getMonth()+1)).slice(-2) + "/" + mySQLDate.getFullYear();    
     return fechaFormateada;
 }
