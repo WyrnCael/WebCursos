@@ -20,7 +20,8 @@ function insertCurso(datosCurso, callback){
     } else {
         con.query("INSERT INTO Cursos(Titulo, Descripcion, Localidad, Direccion, NumPlazas, FechaInicio, FechaFin)" + 
                        " VALUES (?, ?, ?, ?, ?, ?, ?)", [datosCurso.Titulo, datosCurso.Descripcion,
-                        datosCurso.Localidad, datosCurso.Direccion, datosCurso.NumPlazas, datosCurso.FechaInicio, datosCurso.FechaFin],
+                        datosCurso.Localidad, datosCurso.Direccion, datosCurso.NumPlazas, 
+                        formateaFechaEntrada(datosCurso.FechaInicio), formateaFechaEntrada(datosCurso.FechaFin)],
             function(err, rows) { 
                 con.release();                
                 if (err) {
@@ -43,7 +44,7 @@ function insertHorariosCurso(datosCurso, callback){
         } else {
             con.query("INSERT INTO Horarios(IdCurso, Dia, HoraInicio, HoraFin)" + 
                            " VALUES (?, ?, ?, ?)", [datosCurso.Id, h.Dia,
-                            h.HoraInicio, h.HoraFin],
+                            formateaHoraEntrada(h.HoraInicio), formateaHoraEntrada(h.HoraFin)],
                 function(err, rows) { 
                     con.release();                
                     if (err) {
@@ -144,8 +145,8 @@ function selectCurso(idCurso, callback){
                     callback(err);
                 } else {
                     if(rows[0]){
-                        rows[0].FechaInicio = formateaFecha(rows[0].FechaInicio);
-                        rows[0].FechaFin = formateaFecha(rows[0].FechaFin);
+                        rows[0].FechaInicio = formateaFechaSalida(rows[0].FechaInicio);
+                        rows[0].FechaFin = formateaFechaSalida(rows[0].FechaFin);
                         selectHorariosCurso(rows[0], callback);
                     } else{
                         callback(null, -1);
@@ -167,7 +168,11 @@ function selectHorariosCurso(curso, callback){
                 if (err) {
                     callback(err);
                 } else {
-                    curso.Horarios = rows;
+                    rows.forEach(function(h){
+                       h.HoraInicio = formateaHoraSalida(h.HoraInicio) ;
+                       h.HoraFin = formateaHoraSalida(h.HoraFin) ;
+                    });
+                    curso.Horarios = rows;                    
                     callback(null, curso);
                 }                
             });
@@ -188,8 +193,8 @@ function searchByNameCurso(datosBusqueda, callback){
                     callback(err);
                 } else {
                     rows.forEach(function(p){
-                        p.FechaInicio = formateaFecha(p.FechaInicio);
-                        p.FechaFin = formateaFecha(p.FechaFin);
+                        p.FechaInicio = formateaFechaSalida(p.FechaInicio);
+                        p.FechaFin = formateaFechaSalida(p.FechaFin);
                     });                    
                     callback(null, rows);
                 }                
@@ -243,7 +248,7 @@ function insertUsuario(usuario, callback){
     } else {
         con.query("INSERT INTO Usuarios(Correo, Password, Nombre, Apellidos, Sexo, FechaNacimiento)" + 
                        " VALUES (?, ?, ?, ?, ?, ?)", [usuario.Correo, usuario.Password,
-                        usuario.Nombre, usuario.Apellidos, usuario.Sexo, usuario.FechaNacimiento],
+                        usuario.Nombre, usuario.Apellidos, formateaSexoEntrada(usuario.Sexo), formateaFechaEntrada(usuario.FechaNacimiento)],
             function(err, rows) { 
                 con.release();                
                 if (err) {
@@ -271,6 +276,8 @@ function login(usuario, callback){
                     if(rows[0] === undefined){
                         callback(-1);
                     } else{
+                        rows[0].Sexo = formateaSexoSalida(rows[0].sexo);
+                        rows[0].FechaNacimiento = formateaFechaSalida(rows[0].FechaNacimiento);
                         callback(null, rows[0]); 
                     }                   
                 }                
@@ -329,9 +336,44 @@ function getCursosUsuario(idUsuario, callback){
 }
 
 
-function formateaFecha(mySQLDate){
+function formateaFechaSalida(mySQLDate){
+    console.log("Mysqldate " + mySQLDate);
     var fechaFormateada = ('0' + Number(mySQLDate.getDate())).slice(-2) + "/" + ('0' + Number(mySQLDate.getMonth()+1)).slice(-2) + "/" + mySQLDate.getFullYear();    
     return fechaFormateada;
+}
+
+function formateaFechaEntrada(stringDate){
+    var fNacimiento = new Date();
+    fNacimiento.setDate(Number(stringDate.substring(0,2)));
+    fNacimiento.setMonth(Number(stringDate.substring(3,5)) - 1);
+    fNacimiento.setFullYear(Number(stringDate.substring(6,10)));
+    
+    return fNacimiento;
+}
+
+function formateaSexoEntrada(sexoString){
+    var sexo = 0;
+    if(sexoString === "Mujer"){
+        sexo = 1;
+    }  
+    return sexo;
+}
+
+function formateaSexoSalida(sexoInt){
+    var sexo = "Hombre";
+    if(sexoInt === 1){
+        sexo = "Mujer";
+    }  
+    return sexo;
+}
+
+function formateaHoraEntrada(stringTime){
+    stringTime += ":00";
+    return stringTime; 
+}
+
+function formateaHoraSalida(mysqlTime){
+    return mysqlTime.substring(0,5); 
 }
 
 module.exports = {

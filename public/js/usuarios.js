@@ -173,18 +173,6 @@ define([], function() {
     function registrar(usuario){
         console.log(usuario);
         
-        // Parseamos el sexo y la fecha de nacimiento
-        if(usuario.Sexo === "Hombre"){
-            usuario.Sexo = 0;
-        }  else {
-           usuario.Sexo = 1; 
-        }
-        var fNacimiento = new Date();
-        fNacimiento.setDate(Number(usuario.FechaNacimiento.substring(0,2)));
-        fNacimiento.setMonth(Number(usuario.FechaNacimiento.substring(3,5)) - 1);
-        fNacimiento.setFullYear(Number(usuario.FechaNacimiento.substring(6,10)));
-        usuario.FechaNacimiento = fNacimiento;
-        
         $.ajax({
             method: "POST",
             type: "POST",

@@ -112,6 +112,7 @@ define(["usuarios"], function(usuarios) {
                             "<p>Desde el " + data.FechaInicio + " hasta el " + data.FechaFin + "</p>" +
                             "<p class='tituloCuerpo'>Horario:</p><p>";
                 data.Horarios.forEach(function(p, index, array){
+                    console.log(p.HoraInicio);
                     if(index > 0) cuerpo += ", ";
                     cuerpo += p.Dia + ": " + p.HoraInicio.substring(0,5) + " - " + p.HoraFin.substring(0,5); 
 
