@@ -80,8 +80,10 @@ define(["usuarios"], function(usuarios) {
                                 "<td>" + p.Localidad + "</td>" +
                                 "<td>" + p.FechaInicio + "</td>" +
                                 "<td>" + p.FechaFin + "</td>" +
-                                "<td>3</td></tr>");
+                                "<td id='vacantes'>" + p.Vacantes + "</td></tr>");
                 $("#tablaResultados").find("tBody").append(nuevaFila);
+                if(p.Vacantes === 1) $("#tablaResultados tr[data-id=" + p.Id + "]").addClass("warning");
+                if(p.Vacantes === 0) $("#tablaResultados tr[data-id=" + p.Id + "]").addClass("danger");
             });
 
             $("#paginador li.active").removeClass("active");        
@@ -117,7 +119,7 @@ define(["usuarios"], function(usuarios) {
 
                 });
                 cuerpo += "</p><p class='tituloCuerpo'>Numero de plazas:</p>" + 
-                            "<p>" + data.NumPlazas + " (X vacantes)</p>";
+                            "<p>" + data.NumPlazas + " (" + data.Vacantes + " vacantes)</p>";
                 cuerpo += "</div>";
                 cuerpo += "<div id='imagenCurso'></div></div>";
                 obtenerImagen(data.Id);
@@ -157,5 +159,8 @@ define(["usuarios"], function(usuarios) {
            });
     }
 
-    return buscar;
+    return {
+        buscar: buscar,
+        mostrarInfoCurso: mostrarInfoCurso
+    };
 });

@@ -11,7 +11,7 @@ requirejs.config({
     }
 });
 
-define(["cursos", "usuarios", "jquery"], function(buscar, usuarios, $) {
+define(["cursos", "usuarios", "jquery"], function(cursos, usuarios, $) {
     $(document).ready(function() {   
         mostrarBuscarCursos();
         
@@ -81,7 +81,7 @@ define(["cursos", "usuarios", "jquery"], function(buscar, usuarios, $) {
             if (str) {      
                 $("#inputBusqueda").find(".glyphicon").remove();     
                 $("#inputBusqueda").parent("div").removeClass("has-feedback has-error");
-                buscar(str, 0);            
+                cursos.buscar(str, 0);            
             } else {
                 $("#inputBusqueda").append("<span class='glyphicon glyphicon-remove form-control-feedback'></span>");     
                 $("#inputBusqueda").parent("div").addClass("has-feedback has-error");

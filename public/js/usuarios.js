@@ -274,6 +274,25 @@ define([], function() {
             "</div>");
         $("#panelCentral").append(panelActuales); 
         
+        var modal = $("<div class='modal fade' id='infoCurso' tabindex='-1' role='dialog' aria-labelledby='cursoModal' aria-hidden='true'>" +
+                "<div class='modal-dialog' role='document'>" +
+                    "<div class='modal-content'>" +
+                        "<div class='modal-header'>" +
+                           "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>&times;</button>    " +
+                           "<h3 class='modal-title' id='cursoModal'></h3>" +
+                        "</div>" +
+                       "<div class='modal-body'>" +
+                       "</div>" +
+                       "<div class='modal-footer'>" +
+                           "<a href='#' data-dismiss='modal' class='btn btn-default'>Cerrar</a>" +                           
+                       "</div>" +
+                    "</div>" +
+                "</div>" +
+            "</div>");
+            
+        $("#panelCentral").append(modal); 
+            
+        
         buscarYMostrarCursos();
     }
     
@@ -286,18 +305,39 @@ define([], function() {
                 "Basic " + cadenaBase64);
             },
             success: function(data, state, jqXHR) {
+                var resultadosProximos = false, resultadosActuales = false;
+                $.each(data, function(index, curso) {
+                    var nuevaFila = $("<tr data-id='" + curso.DatosCurso.Id + "'  style='cursor: pointer'><td>" + curso.DatosCurso.Titulo + "</td>" +
+                            "<td>" + curso.DatosCurso.Localidad + "</td>" +
+                            "<td>" + curso.DatosCurso.FechaInicio + "</td>" +
+                            "<td>" + curso.DatosCurso.FechaFin + "</td></tr>");
+                    var fechaInicio = new Date(Number(curso.DatosCurso.FechaInicio.substring(6,10)), Number(curso.DatosCurso.FechaInicio.substring(3,5)) - 1, Number(curso.DatosCurso.FechaInicio.substring(0,2)));
+                    var fechaActual = new Date();
+                    if(fechaInicio > fechaActual){
+                        $("#tablaProximosCursos").find("tBody").append(nuevaFila);
+                        resultadosProximos = true;
+                    }
+                    else {
+                        $("#tablaCursosActuales").find("tBody").append(nuevaFila);
+                        resultadosActuales = true;
+                    }
+                    
+                });
+                if(!resultadosProximos){
+                    $("#tablaProximosCursos thead").find("th").remove();
+                    $("#tablaProximosCursos thead").find("tr").append("No estas inscrito en ningun curso que no haya comenzado o finalizado.");
+                }
+                if(!resultadosActuales){
+                    $("#tablaCursosActuales thead").find("th").remove();
+                    $("#tablaCursosActuales thead").find("tr").append("No estas inscrito en ningun curso que haya empezado o finalizado.");
+                }
                 
-                data.forEach(function(c){
-                // Insertamos los datos de cada fila
-                var nuevaFila = $("<tr data-id='" + c.DatosCurso.Id + "' style='cursor: pointer' ><td>" + c.DatosCurso.Titulo + "</td>" +
-                                "<td>" + c.DatosCurso.Localidad + "</td>" +
-                                "<td>" + c.DatosCurso.FechaInicio + "</td>" +
-                                "<td>" + c.DatosCurso.FechaFin + "</td></tr>");
-                var fechaInicio = new Date(Number(c.DatosCurso.FechaInicio.substring(6,10)), Number(c.DatosCurso.FechaInicio.substring(3,5)) - 1, Number(c.DatosCurso.FechaInicio.substring(0,2)));
-                var fechaActual = new Date();
-                if(fechaInicio > fechaActual) $("#tablaProximosCursos").find("tBody").append(nuevaFila);
-                else $("#tablaCursosActuales").find("tBody").append(nuevaFila);
-            });
+                $("#tablaProximosCursos tbody tr").on("click", function() {
+                    requirejs("cursos").mostrarInfoCurso(Number($(this).data("id")));
+                });
+                $("#tablaCursosActuales tbody tr").on("click", function() {
+                    requirejs("cursos").mostrarInfoCurso(Number($(this).data("id")));
+                });
             },
             error: function (jqXHR, textStatus, errorThrown ) {
                 console.log("¡Acceso denegado!");

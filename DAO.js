@@ -138,14 +138,14 @@ function selectCurso(idCurso, callback){
     if (err) {
         callback(err);
     } else {
-        con.query("SELECT Cursos.Id, Titulo, Descripcion, Localidad, Direccion, FechaInicio, FechaFin, NumPlazas, COUNT(*) AS Inscritos FROM CURSOS" + 
-                    " INNER JOIN UsuariosEnCursos" +
+        con.query("SELECT Cursos.Id AS Id, Titulo, Descripcion, Localidad, Direccion, FechaInicio, FechaFin, NumPlazas, COUNT(UsuariosEnCursos.IdUsuario) AS Inscritos FROM CURSOS" + 
+                    " LEFT JOIN UsuariosEnCursos" +
                     " ON Cursos.Id = UsuariosEnCursos.IdCurso" +
                     " GROUP BY Cursos.Id" +
                     " HAVING Cursos.Id = ?", 
             [idCurso],
             function(err, rows) { 
-                con.release();                
+                con.release();  
                 if (err) {
                     callback(err);
                 } else {
@@ -169,17 +169,22 @@ function selectHorariosCurso(curso, callback){
         callback(err);
     } else {
         con.query("SELECT * FROM Horarios WHERE IdCurso = ?", [curso.Id],
-            function(err, rows) { 
+            function(err, horarios) { 
                 con.release();                
                 if (err) {
                     callback(err);
                 } else {
-                    rows.forEach(function(h){
-                       h.HoraInicio = formateaHoraSalida(h.HoraInicio) ;
-                       h.HoraFin = formateaHoraSalida(h.HoraFin) ;
-                    });
-                    curso.Horarios = rows;                    
-                    callback(null, curso);
+                    if(horarios.length === 0 ) { 
+                        callback(null, curso);
+                    }
+                    horarios.forEach(function(h, index, array){
+                        h.HoraInicio = formateaHoraSalida(h.HoraInicio) ;
+                        h.HoraFin = formateaHoraSalida(h.HoraFin) ;
+                        if(index === array.length - 1){
+                            curso.Horarios = horarios; 
+                            callback(null, curso);
+                        }
+                    });                    
                 }                
             });
         }
@@ -191,7 +196,11 @@ function searchByNameCurso(datosBusqueda, callback){
     if (err) {
         callback(err);
     } else {
-        con.query("SELECT Id, Titulo, Localidad, FechaInicio, FechaFin FROM Cursos WHERE Titulo LIKE ? ORDER BY FechaInicio ASC LIMIT ?, ?", 
+        con.query("SELECT Cursos.Id, Titulo, Descripcion, Localidad, Direccion, FechaInicio, FechaFin, NumPlazas, COUNT(usuariosencursos.IdUsuario) AS Inscritos FROM CURSOS" + 
+                    " LEFT JOIN UsuariosEnCursos" +
+                    " ON Cursos.Id = UsuariosEnCursos.IdCurso" +
+                    " GROUP BY Cursos.Id" +
+                    " HAVING Titulo LIKE ? ORDER BY FechaInicio ASC LIMIT ?, ?", 
                     ['%' + datosBusqueda.str + '%', Number(datosBusqueda.pos), Number(datosBusqueda.num)],
             function(err, rows) { 
                 con.release();                
@@ -201,6 +210,7 @@ function searchByNameCurso(datosBusqueda, callback){
                     rows.forEach(function(p){
                         p.FechaInicio = formateaFechaSalida(p.FechaInicio);
                         p.FechaFin = formateaFechaSalida(p.FechaFin);
+                        p.Vacantes = Number(p.NumPlazas) - Number(p.Inscritos);
                     });                    
                     callback(null, rows);
                 }                
@@ -323,22 +333,30 @@ function getCursosUsuario(idUsuario, callback){
                 if (err) {
                     callback(err);
                 } else {
-                    rows.forEach(function(c, index, array){
-                        selectCurso(c.IdCurso, function(err, datosCurso){
-                            if(err){
-                                callback(err);
-                            } else {
-                                c.DatosCurso = datosCurso;
-                                if(index === array.length - 1){
-                                    callback(null, rows);
-                                }
-                            }
-                        });                        
-                    });                    
+                    if(rows[0]){
+                        getInfoCursosUsuarios(rows, 0, callback);       
+                    } else {
+                        callback(null, []);
+                    }                            
                 }                
             });
         }
     });
+}
+
+function getInfoCursosUsuarios(cursos, index, callback){
+    selectCurso(cursos[index].IdCurso, function(err, datosCurso){
+        if(err){
+            callback(err);
+        } else {
+            cursos[index].DatosCurso = datosCurso;            
+            if(index === cursos.length - 1){
+                callback(null, cursos);
+            } else {
+                getInfoCursosUsuarios(cursos, index + 1, callback);
+            }
+        }
+    });    
 }
 
 
