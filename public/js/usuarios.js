@@ -10,6 +10,7 @@ define([], function() {
         $("#panelCentral").find("*").remove();
         
         var panel = $("<h1>Identificación</h1>" +
+                "<div id='erroresLogin'></div>" +
             "<form role='form' id='formIdent'>" +
                 "<div class='form-group'>" +
                     "<label for='correo'>" +
@@ -46,7 +47,21 @@ define([], function() {
             e.preventDefault();
             var correo = $("#correo").val();
             var password = $("#password").val();
-            login(correo, password);
+
+            $("#erroresLogin").text("");
+            $("#erroresLogin").removeClass("alert alert-danger");
+           
+            if(correo === ""){
+                $("#erroresLogin").addClass("alert alert-danger");
+                $("#erroresLogin").append("<strong>¡Error!</strong> La dirección de correo no puede estar vacia.");
+            }
+            else if(password === "") {
+                $("#erroresLogin").addClass("alert alert-danger");
+                $("#erroresLogin").append("<strong>¡Error!</strong> La contraseña no puede estar vacia.");
+            }
+            else{
+                login(correo, password);
+            }                 
         });
         
         $("#botonRegistro").on("click", function(e) {
@@ -59,6 +74,7 @@ define([], function() {
         $("#panelCentral").find("*").remove();
         
         var panel = $("<h1>Nuevo usuario</h1>" +
+                "<div id='erroresRegistro'></div>" +
             "<form id='formRegistro' class='form-horizontal' role='form'>" +
                 "<div class='form-group'>" +
                     "<label class='contol-label col-sm-2' for='correo'>" +
@@ -135,7 +151,7 @@ define([], function() {
                 Sexo: $("input[name=tipoSexo]:checked", "#formRegistro").val(),
                 FechaNacimiento: $("#fNacimiento").val()
             };
-            registrar(usuario);        
+            if(validaRegistro(usuario)) registrar(usuario);        
         });
     }
     
@@ -176,7 +192,9 @@ define([], function() {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown ) {
-                console.log("¡Acceso denegado!");
+                $("#erroresLogin").text("");
+                $("#erroresLogin").addClass("alert alert-danger");
+                $("#erroresLogin").append("<strong>¡Usuario o contraseña incorrectos!</strong>");
             }
                     
         });
@@ -194,7 +212,9 @@ define([], function() {
                 login(usuario.Correo, usuario.Password);
             },
             error: function (jqXHR, textStatus, errorThrown ) {
-                console.log("¡No registrado!");
+                $("#erroresRegistro").text("");
+                $("#erroresRegistro").addClass("alert alert-danger");
+                $("#erroresRegistro").append("<strong>¡Error!</strong> Ya existe un usuario con esa dirección de correo.");
             }
                     
         });
@@ -374,6 +394,38 @@ define([], function() {
             }
                     
         });
+    }
+    
+    function validaRegistro(usuario){
+        $("#erroresRegistro").text("");
+        $("#erroresRegistro").removeClass("alert alert-danger");
+        var dtRegex = new RegExp(/\b\d\d\/\d\d\/\d\d\d\d\b/);
+
+        if(usuario.Correo === ""){
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> La dirección de correo no puede estar vacia.");
+        } else if(usuario.Password === "") {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> La contraseña no puede estar vacia.");
+        } else if(usuario.Nombre === "") {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> El nombre no puede estar vacio.");
+        } else if(usuario.Apellidos === "") {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> Debes introducir Apellidos.");
+        } else if(usuario.Sexo === undefined) {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> Debes elegir un sexo.");
+        } else if(usuario.FechaNacimiento === "") {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> La fecha de nacimiento no puede estar vacia.");
+        } else if(!dtRegex.test(usuario.FechaNacimiento)) {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> El formato de la fecha de nacimiento debe ser del tipo dd/mm/aaaa.");
+        } else {
+            return true;
+        }            
+        return false;
     }
     
     return {
