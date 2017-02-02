@@ -169,7 +169,8 @@ define([], function() {
                         e.preventDefault();
                         $("#buscarCursos").removeClass("active");
                         $("#misCursos").addClass("active");
-                        mostrarCursosUsuario();                        
+                        mostrarCursosUsuario(); 
+                        mostrarHorariosUsuario();
                     });
                     
                     requirejs("navegacion").mostrarBuscarCursos();
@@ -373,8 +374,216 @@ define([], function() {
                 console.log("¡Acceso denegado!");
             }
                     
+        });      
+        
+    }
+    
+    function mostrarHorariosUsuario(){
+      
+
+         var panelHorarios = $("<h1>Horarios</h1>" +
+            "<div id='tablaHorarios' class='table-responsive'>" +
+                "<table class='table  table-bordered'>" +
+                "<thead>" +
+                        "<tr><th>Horas</th>" +
+                        "<th>Lunes</th>" +
+                        "<th>Martes</th>" +
+                        "<th>Miercoles</th>" +
+                        "<th>Jueves</th>" +
+                        "<th>Viernes</th>" +
+                        "<th>Sabado</th>" +
+                        "<th>Domingo</th></tr>" +
+                        
+                        "<tr><th>00:00-12:00</th>" +
+                        "<td id = 'L0012'></td>" +
+                        "<td id = 'M0012'></td>" +
+                        "<td id = 'X0012'></td>" +
+                        "<td id = 'J0012'></td>" +
+                        "<td id = 'V0012'></td>" +
+                        "<td id = 'S0012'></td>" +
+                        "<td id = 'D0012'></td></th>" +
+                        
+                        "<tr><th>12:00-12:15</th>" +
+                        "<td id = 'L121215'></td>" +
+                        "<td id = 'M121215'></td>" +
+                        "<td id = 'X121215'></td>" +
+                        "<td id = 'J121215'></td>" +
+                        "<td id = 'V121215'></td>" +
+                        "<td id = 'S121215'></td>" +
+                        "<td id = 'D121215'></td></th>" +
+                        
+                        "<tr><th>12:15-13:00</th>" +
+                        "<td id = 'L121513'></td>" +
+                        "<td id = 'M121513'></td>" +
+                        "<td id = 'X121513'></td>" +
+                        "<td id = 'J121513'></td>" +
+                        "<td id = 'V121513'></td>" +
+                        "<td id = 'S121513'></td>" +
+                        "<td id = 'D121513'></td></th>" +
+                        
+                        "<tr><th>13:00-14:00</th>" +
+                        "<td id = 'L1314'></td>" +
+                        "<td id = 'M1314'></td>" +
+                        "<td id = 'X1314'></td>" +
+                        "<td id = 'J1314'></td>" +
+                        "<td id = 'V1314'></td>" +
+                        "<td id = 'S1314'></td>" +
+                        "<td id = 'D1314'></td></th>" +
+                        
+                        "<tr><th>14:00-18:00</th>" +
+                        "<td id = 'L1418'></td>" +
+                        "<td id = 'M1418'></td>" +
+                        "<td id = 'X1418'></td>" +
+                        "<td id = 'J1418'></td>" +
+                        "<td id = 'V1418'></td>" +
+                        "<td id = 'S1418'></td>" +
+                        "<td id = 'D1418'></td></th>" +
+                        
+                        "<tr><th>18:00-19:00</th>" +
+                        "<td id = 'L1819'></td>" +
+                        "<td id = 'M1819'></td>" +
+                        "<td id = 'X1819'></td>" +
+                        "<td id = 'J1819'></td>" +
+                        "<td id = 'V1819'></td>" +
+                        "<td id = 'S1819'></td>" +
+                        "<td id = 'D1819'></td></th>" +
+                        
+                        "<tr><th>19:00-24:00</th>" +
+                        "<td id = 'L1924'></td>" +
+                        "<td id = 'M1924'></td>" +
+                        "<td id = 'X1924'></td>" +
+                        "<td id = 'J1924'></td>" +
+                        "<td id = 'V1924'></td>" +
+                        "<td id = 'S1924'></td>" +
+                        "<td id = 'D1924'></td></th>" +
+                        
+                        
+                "</thead>" +
+                "<tbody>               " +
+                "</tbody>" +
+                "</table>" +
+            "</div>");
+        $("#panelCentral").append(panelHorarios); 
+        $("th").addClass('active');
+        
+        /*var tag = "#L1924";
+        $(tag).append("hjvjhv<br>");
+        $(tag).empty();
+         $(tag).append("hjvjhv<br>");
+         $(tag).append("gggg<br>");*/
+        //$("#L1924").append("hjvjhv");
+        //$("#V1314").append("hjvjhv");
+/*
+        var modal = $("<div class='modal fade' id='infoCurso' tabindex='-1' role='dialog' aria-labelledby='cursoModal' aria-hidden='true'>" +
+                "<div class='modal-dialog' role='document'>" +
+                    "<div class='modal-content'>" +
+                        "<div class='modal-header'>" +
+                           "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>&times;</button>    " +
+                           "<h3 class='modal-title' id='cursoModal'></h3>" +
+                        "</div>" +
+                       "<div class='modal-body'>" +
+                       "</div>" +
+                       "<div class='modal-footer'>" +
+                           "<a href='#' data-dismiss='modal' class='btn btn-default'>Cerrar</a>" +                           
+                       "</div>" +
+                    "</div>" +
+                "</div>" +
+            "</div>");
+
+        $("body").append(modal); 
+
+*/
+        buscarYMostrarHorarios("01/02/2017");
+    }
+    
+    //el objeto semana sera un date() que coincida con el lunes de esa semana. (se buscaran horarios de semana - semana+6)
+    function buscarYMostrarHorarios(semana){ 
+        $.ajax({
+            method: "POST",
+            url: "/usuarios/horarios",
+            contentType: "application/json",
+            beforeSend: function(req) {
+                req.setRequestHeader("Authorization",
+                "Basic " + cadenaBase64);
+            },
+            data: JSON.stringify({Fecha : semana}),
+            success: function(data, state, jqXHR) {
+                
+                $.each(data, function(index, datosHorario){
+                    añadeHoraCurso(datosHorario);
+                });
+                
+                
+                /*
+                $("#tablaProximosCursos tbody tr").on("click", function() {
+                    requirejs("cursos").mostrarInfoCurso(Number($(this).data("id")));
+                });
+                $("#tablaCursosActuales tbody tr").on("click", function() {
+                    requirejs("cursos").mostrarInfoCurso(Number($(this).data("id")));
+                });*/
+            },
+            error: function (jqXHR, textStatus, errorThrown ) {
+                console.log("¡Acceso denegado!");
+            }
+                    
         });
     }
+    
+    function añadeHoraCurso(datos){
+        var final = false;
+        var tag = "#";
+        
+        if(!final && datos.Horarios.HoraInicio <= "00:00"){
+            var n = tag + datos.Dia + "0012" + "<br>";
+            $(n).append(datos.Titulo).addClass('success');
+            
+            if(datos.Horarios.HoraFin <= "12:00")
+                final = true;
+        }
+        if(!final && datos.Horarios.HoraInicio <= "12:00"){
+            var n = tag + datos.Dia + "121215" + "<br>";
+            $(n).append(datos.Titulo).addClass('success');
+            
+            if(datos.Horarios.HoraFin <= "12:15")
+                final = true;
+        }
+        if(!final && datos.Horarios.HoraInicio <= "12:15"){
+            var n = tag + datos.Dia + "121513" + "<br>";
+            $(n).append(datos.Titulo).addClass('success');
+            
+            if(datos.Horarios.HoraFin <= "13:00")
+                final = true;
+        }
+        if(!final && datos.Horarios.HoraInicio <= "13:00"){
+            var n = tag + datos.Dia + "1314" + "<br>";
+            $(n).append(datos.Titulo).addClass('success');
+            
+            if(datos.Horarios.HoraFin <= "14:00")
+                final = true;
+        }
+        if(!final && datos.Horarios.HoraInicio <= "14:00"){
+            var n = tag + datos.Dia + "1418" + "<br>";
+            $(n).append(datos.Titulo).addClass('success');
+            
+            if(datos.Horarios.HoraFin <= "18:00")
+                final = true;
+        }
+        if(!final && datos.Horarios.HoraInicio <= "18:00"){
+            var n = tag + datos.Dia + "1819" + "<br>";
+            $(n).append(datos.Titulo).addClass('success');
+            
+            if(datos.Horarios.HoraFin <= "19:00")
+                final = true;
+        }
+        if(!final && datos.Horarios.HoraInicio <= "19:00"){
+            var n = tag + datos.Dia + "1924" + "<br>";
+            $(n).append(datos.Titulo).addClass('success');
+            
+            if(datos.Horarios.HoraFin <= "24:00")
+                final = true;
+        }
+    }
+    
     
     return {
         mostrarIdentificarse: mostrarIdentificarse,

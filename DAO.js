@@ -191,6 +191,31 @@ function selectHorariosCurso(curso, callback){
     });
 }
 
+function getHorariosCurso(idCurso, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("SELECT * FROM Horarios WHERE IdCurso = ?", [idCurso],
+            function(err, horarios) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    /*if(horarios.length === 0 ) { 
+                        callback(null, curso);
+                    }*/
+                    horarios.forEach(function(h){
+                        h.HoraInicio = formateaHoraSalida(h.HoraInicio) ;
+                        h.HoraFin = formateaHoraSalida(h.HoraFin) ;                        
+                    }); 
+                    callback(null, horarios);
+                }                
+            });
+        }
+    });
+}
+
 function searchByNameCurso(datosBusqueda, callback){
     pool.getConnection(function(err, con) {
     if (err) {
@@ -359,6 +384,38 @@ function getInfoCursosUsuarios(cursos, index, callback){
     });    
 }
 
+function getHorariosUsuario(idUsuario, fecha, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        var fechaForm = formateaFechaEntrada(fecha);
+        con.query(" SELECT * FROM UsuariosEnCursos inner join Cursos on UsuariosEnCursos.IdCurso = Cursos.Id " +
+            " having IdUsuario = ? AND FechaInicio <= ? AND FechaFin >= ?", 
+                                [idUsuario, fechaForm, fechaForm],
+            function(err, cursos) { 
+                con.release();                
+                if (err) {
+                    callback(err);
+                } else {
+                    var listaCursos = new Object();
+                    for(var i = 0; i < cursos.length; i++){
+                        getHorariosCurso(cursos[i].Id, function(err, horario){
+                            if(err)
+                                console.log(err);
+                            else
+                                listaCursos = cursos[i];
+                                listaCursos.Horarios = horario;
+                        });
+                        
+                    };
+                    console.log(listaCursos);
+                    callback(null, listaCursos);
+                }                
+            });
+        }
+    });
+};
 
 function formateaFechaSalida(mySQLDate){
     var fechaFormateada = ('0' + Number(mySQLDate.getDate())).slice(-2) + "/" + ('0' + Number(mySQLDate.getMonth()+1)).slice(-2) + "/" + mySQLDate.getFullYear();    
@@ -410,5 +467,7 @@ module.exports = {
     insertUsuario: insertUsuario,
     login: login,
     inscribirUsuarioEnCurso: inscribirUsuarioEnCurso,
-    getCursosUsuario: getCursosUsuario
+    getCursosUsuario: getCursosUsuario,
+    getHorariosCurso: getHorariosCurso,
+    getHorariosUsuario: getHorariosUsuario
 };

@@ -75,4 +75,14 @@ routerUsuarios.get("/cursos", passport.authenticate('basic', {session: false}), 
     });
 });
 
+routerUsuarios.post("/horarios", passport.authenticate('basic', {session: false}), function(req, res) {
+    DAO.getHorariosUsuario(req.user.Id, req.body.Fecha, function(err, cursos){
+        if(err){
+            res.status(500);
+            res.json(err);
+        } else {
+           res.json(cursos);
+        }
+    });
+});
 module.exports = routerUsuarios;
