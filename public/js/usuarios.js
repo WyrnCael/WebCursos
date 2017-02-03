@@ -398,119 +398,83 @@ define([], function() {
                         "<th>Sabado</th>" +
                         "<th>Domingo</th></tr>" +
                         
-                        "<tr><th>00:00-12:00</th>" +
-                        "<td id = 'L0012'></td>" +
-                        "<td id = 'M0012'></td>" +
-                        "<td id = 'X0012'></td>" +
-                        "<td id = 'J0012'></td>" +
-                        "<td id = 'V0012'></td>" +
-                        "<td id = 'S0012'></td>" +
-                        "<td id = 'D0012'></td></th>" +
-                        
-                        "<tr><th>12:00-12:15</th>" +
-                        "<td id = 'L121215'></td>" +
-                        "<td id = 'M121215'></td>" +
-                        "<td id = 'X121215'></td>" +
-                        "<td id = 'J121215'></td>" +
-                        "<td id = 'V121215'></td>" +
-                        "<td id = 'S121215'></td>" +
-                        "<td id = 'D121215'></td></th>" +
-                        
-                        "<tr><th>12:15-13:00</th>" +
-                        "<td id = 'L121513'></td>" +
-                        "<td id = 'M121513'></td>" +
-                        "<td id = 'X121513'></td>" +
-                        "<td id = 'J121513'></td>" +
-                        "<td id = 'V121513'></td>" +
-                        "<td id = 'S121513'></td>" +
-                        "<td id = 'D121513'></td></th>" +
-                        
-                        "<tr><th>13:00-14:00</th>" +
-                        "<td id = 'L1314'></td>" +
-                        "<td id = 'M1314'></td>" +
-                        "<td id = 'X1314'></td>" +
-                        "<td id = 'J1314'></td>" +
-                        "<td id = 'V1314'></td>" +
-                        "<td id = 'S1314'></td>" +
-                        "<td id = 'D1314'></td></th>" +
-                        
-                        "<tr><th>14:00-18:00</th>" +
-                        "<td id = 'L1418'></td>" +
-                        "<td id = 'M1418'></td>" +
-                        "<td id = 'X1418'></td>" +
-                        "<td id = 'J1418'></td>" +
-                        "<td id = 'V1418'></td>" +
-                        "<td id = 'S1418'></td>" +
-                        "<td id = 'D1418'></td></th>" +
-                        
-                        "<tr><th>18:00-19:00</th>" +
-                        "<td id = 'L1819'></td>" +
-                        "<td id = 'M1819'></td>" +
-                        "<td id = 'X1819'></td>" +
-                        "<td id = 'J1819'></td>" +
-                        "<td id = 'V1819'></td>" +
-                        "<td id = 'S1819'></td>" +
-                        "<td id = 'D1819'></td></th>" +
-                        
-                        "<tr><th>19:00-24:00</th>" +
-                        "<td id = 'L1924'></td>" +
-                        "<td id = 'M1924'></td>" +
-                        "<td id = 'X1924'></td>" +
-                        "<td id = 'J1924'></td>" +
-                        "<td id = 'V1924'></td>" +
-                        "<td id = 'S1924'></td>" +
-                        "<td id = 'D1924'></td></th>" +
-                        
-                        
                 "</thead>" +
                 "<tbody>               " +
                 "</tbody>" +
                 "</table>" +
             "</div>");
         $("#panelCentral").append(panelHorarios); 
+        
         $("th").addClass('active');
         
-        /*var tag = "#L1924";
-        $(tag).append("hjvjhv<br>");
-        $(tag).empty();
-         $(tag).append("hjvjhv<br>");
-         $(tag).append("gggg<br>");*/
-        //$("#L1924").append("hjvjhv");
-        //$("#V1314").append("hjvjhv");
-/*
-        var modal = $("<div class='modal fade' id='infoCurso' tabindex='-1' role='dialog' aria-labelledby='cursoModal' aria-hidden='true'>" +
-                "<div class='modal-dialog' role='document'>" +
-                    "<div class='modal-content'>" +
-                        "<div class='modal-header'>" +
-                           "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>&times;</button>    " +
-                           "<h3 class='modal-title' id='cursoModal'></h3>" +
-                        "</div>" +
-                       "<div class='modal-body'>" +
-                       "</div>" +
-                       "<div class='modal-footer'>" +
-                           "<a href='#' data-dismiss='modal' class='btn btn-default'>Cerrar</a>" +                           
-                       "</div>" +
-                    "</div>" +
-                "</div>" +
-            "</div>");
+        /*
 
-        $("body").append(modal); 
-
-*/      //lunes de la semana qe estamos buscando
+     //lunes de la semana qe estamos buscando
         var fecha = new Date(2017,2,3);
         
         var FechaInicio, FechaFin;
         
-        console.log("kjksjd");
-        $.each(curso, function(index, c){
-            FechaInicio = new Date(Number(curso.DatosCurso.FechaInicio.substring(6,10)), Number(curso.DatosCurso.FechaInicio.substring(3,5)) - 1, Number(curso.DatosCurso.FechaInicio.substring(0,2)));
-            FechaFin = new Date(Number(curso.DatosCurso.FechaFin.substring(6,10)), Number(curso.DatosCurso.FechaFin.substring(3,5)) - 1, Number(curso.DatosCurso.FechaFin.substring(0,2)));
-            if(FechaInicio <= fecha){
-                añadeHoraCurso(c.DatosCurso);
-            }
-        });
-        buscarYMostrarHorarios();
+     
+        var listaCursos = [];
+        
+        listaCursos[0].Horarios.HoraInicio = "09:00";
+        listaCursos[0].Horarios.HoraFin = "10:00";
+        
+        listaCursos[1].Horarios.HoraInicio = "09:15";
+        listaCursos[1].Horarios.HoraFin = "10:00";
+        
+        listaCursos[2].Horarios.HoraInicio = "10:30";
+        listaCursos[2].Horarios.HoraFin = "11:00";
+        
+        console.log(listaCursos);
+         */  
+         var nuevaFila = ("<tr><th>kln</th>" +
+                    "<td id='Lf'>cx</td>" +  
+                    "<td id='Mf'>dc</td>" + 
+                    "<td id='Xf'>xcv</td>" + 
+                    "<td id='Jf'>xcv</td>" + 
+                    "<td id='Vf'>cv</td>" + 
+                    "<td id='Sf'>xcv</td>" + 
+                    "<td id='Df'>v</td></tr>" );
+         $("#tablaHorarios tbody").append(nuevaFila);
+        
+        dibujaHorario(listaCursos);
     }
+    
+    //listaCursos sera array de los cursos solo de la semana a mostrar!! las horas menores de 12 deben formatearse 
+    // por ejemplo las 9:00 -> 09:00 para la funcion sort
+    function dibujaHorario(listaCursos){
+        var horas = [];
+        horas[0] = "00:00";
+        horas[1] = "24:00";
+        var iHoras = 2;
+        $.each(listaCursos, function(index, curso){
+            if(!horas.includes(curso.Horarios.HoraInicio)){
+                horas[iHoras] = curso.Horarios.HoraInicio;
+                iHoras++;
+            }
+            if(!horas.includes(curso.Horarios.HoraFin)){
+                horas[iHoras] = curso.Horarios.HoraFin;
+                iHoras++;
+            }
+            horas.sort();           
+        });
+        
+        for(var i = 0; i < horas.length - 1; i++){
+            var tdId = horas[i] + horas[i+1];
+            var nuevaFila = ("<tr><th>" + horas[i] + "-" + horas[i+1] + "</th>" +
+                    "<td id='L" + tdId + "'></td>" +  
+                    "<td id='M" + tdId + "'></td>" + 
+                    "<td id='X" + tdId + "'></td>" + 
+                    "<td id='J" + tdId + "'></td>" + 
+                    "<td id='V" + tdId + "'></td>" + 
+                    "<td id='S" + tdId + "'></td>" + 
+                    "<td id='D" + tdId + "'></td></tr>" );
+            $("#tablaHorarios").find("tBody").append(nuevaFila);
+            
+        }
+    }
+    
     /*
     //el objeto semana sera un date() que coincida con el lunes de esa semana. (se buscaran horarios de semana - semana+6)
     function buscarYMostrarHorarios(semana){ 
