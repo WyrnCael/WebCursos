@@ -7,7 +7,7 @@ requirejs.config({
     // Directorio en el que se encuentran los scripts
     baseUrl: "./js",
     paths: {
-        jquery: './js/external/jquery-3.1.1'
+        jquery: './js/external/jquery-3.1.1',
     }
 });
 

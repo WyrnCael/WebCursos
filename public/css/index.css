@@ -31,3 +31,21 @@ div.navbar-header{
 #datosUser{
     padding-top: 14px;
 }
+
+#tablaHorarios td{
+    vertical-align: middle !important;
+}
+
+.botonHorario{
+    border-radius: 24px !important;
+    color: #5bc0de !important;
+}
+
+#btnHAnterior{
+    float: left;
+}
+
+#btnHSiguiente{
+    float: right;
+}
+
