@@ -3,16 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Jota/Documents/NetBeansProjects/WebCursos/public/css/infoCurso.css</file>
-            <file>file:/C:/Users/Jota/Documents/NetBeansProjects/WebCursos/DAO.js</file>
-            <file>file:/C:/Users/Jota/Documents/NetBeansProjects/WebCursos/public/js/cursos.js</file>
-            <file>file:/C:/Users/Jota/Documents/NetBeansProjects/WebCursos/public/index.html</file>
-            <file>file:/C:/Users/Jota/Documents/NetBeansProjects/WebCursos/app.js</file>
-            <file>file:/C:/Users/Jota/Documents/NetBeansProjects/WebCursos/public/js/navegacion.js</file>
-            <file>file:/C:/Users/Jota/Documents/NetBeansProjects/WebCursos/public/css/index.css</file>
-            <file>file:/C:/Users/Jota/Documents/NetBeansProjects/WebCursos/public/js/usuarios.js</file>
-            <file>file:/C:/Users/Jota/Documents/NetBeansProjects/WebCursos/routerUsuarios.js</file>
-            <file>file:/C:/Users/Jota/Documents/NetBeansProjects/WebCursos/routerCursos.js</file>
+            <file>file:/C:/Users/rbn99/Documents/NetBeansProjects/WebCursos/WebCursos/routerUsuarios.js</file>
+            <file>file:/C:/Users/rbn99/Documents/NetBeansProjects/WebCursos/WebCursos/public/js/cursos.js</file>
+            <file>file:/C:/Users/rbn99/Documents/NetBeansProjects/WebCursos/WebCursos/public/index.html</file>
+            <file>file:/C:/Users/rbn99/Documents/NetBeansProjects/WebCursos/WebCursos/public/js/navegacion.js</file>
+            <file>file:/C:/Users/rbn99/Documents/NetBeansProjects/WebCursos/WebCursos/public/js/usuarios.js</file>
+            <file>file:/C:/Users/rbn99/Documents/NetBeansProjects/WebCursos/WebCursos/public/js/external/require.js</file>
+            <file>file:/C:/Users/rbn99/Documents/NetBeansProjects/WebCursos/WebCursos/app.js</file>
+            <file>file:/C:/Users/rbn99/Documents/NetBeansProjects/WebCursos/WebCursos/DAO.js</file>
         </group>
     </open-files>
 </project-private>
