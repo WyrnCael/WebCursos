@@ -23,7 +23,7 @@ define(["usuarios"], function(usuarios) {
                 },
 
                 error: function (jqXHR, textStatus, errorThrown ) {
-                    alert( "Se ha producido un error: " + textStatus);
+                    alert( "Se ha producido un error: " + jqXHR.responseJSON.code);
                 }
            });
     }
@@ -135,7 +135,7 @@ define(["usuarios"], function(usuarios) {
             },
 
             error: function (jqXHR, textStatus, errorThrown ) {
-                alert( "Se ha producido un error: " + textStatus);
+                alert( "Se ha producido un error: " + jqXHR.responseJSON.code);
             }
         });
     }

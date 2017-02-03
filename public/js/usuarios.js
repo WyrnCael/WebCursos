@@ -191,9 +191,13 @@ define([], function() {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown ) {
-                $("#erroresLogin").text("");
-                $("#erroresLogin").addClass("alert alert-danger");
-                $("#erroresLogin").append("<strong>¡Usuario o contraseña incorrectos!</strong>");
+                if(jqXHR.responseText === "-1\n"){
+                    $("#erroresLogin").text("");
+                    $("#erroresLogin").addClass("alert alert-danger");
+                    $("#erroresLogin").append("<strong>¡Usuario o contraseña incorrectos!</strong>");
+                } else {
+                    alert( "Se ha producido un error: " + jqXHR.responseText);
+                }
             }
                     
         });
@@ -211,9 +215,13 @@ define([], function() {
                 login(usuario.Correo, usuario.Password);
             },
             error: function (jqXHR, textStatus, errorThrown ) {
-                $("#erroresRegistro").text("");
-                $("#erroresRegistro").addClass("alert alert-danger");
-                $("#erroresRegistro").append("<strong>¡Error!</strong> Ya existe un usuario con esa dirección de correo.");
+                if(jqXHR.responseJSON.code === "ER_DUP_ENTRY"){
+                    $("#erroresRegistro").text("");
+                    $("#erroresRegistro").addClass("alert alert-danger");
+                    $("#erroresRegistro").append("<strong>¡Error!</strong> Ya existe un usuario con esa dirección de correo.");
+                } else {
+                    alert( "Se ha producido un error: " + jqXHR.responseJSON.code);
+                }
             }
                     
         });
@@ -283,7 +291,7 @@ define([], function() {
                 $(".modal-footer").append("<a href='#' disabled='disabled' class='btn btn-success' id='insritoCurso'>Inscrito con éxito</a>");
             },
             error: function (jqXHR, textStatus, errorThrown ) {
-                alert("¡Error al inscribirse!");
+                alert( "Se ha producido un error: " + jqXHR.responseJSON.code);
             }
                     
         });
