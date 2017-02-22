@@ -14,7 +14,6 @@ app.use("/usuarios", routerUsuarios);
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", function(req, res){
-    
     res.status(300);
     res.redirect("/index.html");
     res.end();

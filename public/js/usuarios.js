@@ -170,7 +170,7 @@ define([], function() {
                         $("#buscarCursos").removeClass("active");
                         $("#misCursos").addClass("active");
                         mostrarCursosUsuario(); 
-                        
+                        mostrarHorariosUsuario();
                     });
                     
                     requirejs("navegacion").mostrarBuscarCursos();
@@ -336,10 +336,8 @@ define([], function() {
                 "Basic " + cadenaBase64);
             },
             success: function(data, state, jqXHR) {
-                
                 var resultadosProximos = false, resultadosActuales = false;
                 $.each(data, function(index, curso) {
-                    
                     var nuevaFila = $("<tr data-id='" + curso.DatosCurso.Id + "'  style='cursor: pointer'><td>" + curso.DatosCurso.Titulo + "</td>" +
                             "<td>" + curso.DatosCurso.Localidad + "</td>" +
                             "<td>" + curso.DatosCurso.FechaInicio + "</td>" +
@@ -356,8 +354,6 @@ define([], function() {
                     }
                     
                 });
-                //console.log(data.DatosCurso);
-                mostrarHorariosUsuario(data);
                 if(!resultadosProximos){
                     $("#tablaProximosCursos thead").find("th").remove();
                     $("#tablaProximosCursos thead").find("tr").append("No estas inscrito en ningun curso que no haya comenzado o finalizado.");
@@ -382,8 +378,8 @@ define([], function() {
         
     }
     
-    function mostrarHorariosUsuario(curso){
-        console.log(curso);
+    function mostrarHorariosUsuario(){
+      
 
          var panelHorarios = $("<h1>Horarios</h1>" +
             "<div id='tablaHorarios' class='table-responsive'>" +
@@ -496,22 +492,10 @@ define([], function() {
 
         $("body").append(modal); 
 
-*/      //lunes de la semana qe estamos buscando
-        var fecha = new Date(2017,2,3);
-        
-        var FechaInicio, FechaFin;
-        
-        console.log("kjksjd");
-        $.each(curso, function(index, c){
-            FechaInicio = new Date(Number(curso.DatosCurso.FechaInicio.substring(6,10)), Number(curso.DatosCurso.FechaInicio.substring(3,5)) - 1, Number(curso.DatosCurso.FechaInicio.substring(0,2)));
-            FechaFin = new Date(Number(curso.DatosCurso.FechaFin.substring(6,10)), Number(curso.DatosCurso.FechaFin.substring(3,5)) - 1, Number(curso.DatosCurso.FechaFin.substring(0,2)));
-            if(FechaInicio <= fecha){
-                añadeHoraCurso(c.DatosCurso);
-            }
-        });
-        buscarYMostrarHorarios();
+*/
+        buscarYMostrarHorarios("01/02/2017");
     }
-    /*
+    
     //el objeto semana sera un date() que coincida con el lunes de esa semana. (se buscaran horarios de semana - semana+6)
     function buscarYMostrarHorarios(semana){ 
         $.ajax({
@@ -536,7 +520,7 @@ define([], function() {
                 });
                 $("#tablaCursosActuales tbody tr").on("click", function() {
                     requirejs("cursos").mostrarInfoCurso(Number($(this).data("id")));
-                });
+                });*/
             },
             error: function (jqXHR, textStatus, errorThrown ) {
                 console.log("¡Acceso denegado!");
@@ -544,7 +528,7 @@ define([], function() {
                     
         });
     }
-    */
+    
     function añadeHoraCurso(datos){
         var final = false;
         var tag = "#";
