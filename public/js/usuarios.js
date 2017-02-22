@@ -4,12 +4,14 @@
 "use strict";
 
 define([], function() {
-    var cadenaBase64 = null;  
+    var cadenaBase64 = null;
+    var inSemHorarioActual = undefined;
     
     function mostrarIdentificarse(){
         $("#panelCentral").find("*").remove();
         
         var panel = $("<h1>Identificación</h1>" +
+                "<div id='erroresLogin'></div>" +
             "<form role='form' id='formIdent'>" +
                 "<div class='form-group'>" +
                     "<label for='correo'>" +
@@ -46,7 +48,21 @@ define([], function() {
             e.preventDefault();
             var correo = $("#correo").val();
             var password = $("#password").val();
-            login(correo, password);
+
+            $("#erroresLogin").text("");
+            $("#erroresLogin").removeClass("alert alert-danger");
+           
+            if(correo === ""){
+                $("#erroresLogin").addClass("alert alert-danger");
+                $("#erroresLogin").append("<strong>¡Error!</strong> La dirección de correo no puede estar vacia.");
+            }
+            else if(password === "") {
+                $("#erroresLogin").addClass("alert alert-danger");
+                $("#erroresLogin").append("<strong>¡Error!</strong> La contraseña no puede estar vacia.");
+            }
+            else{
+                login(correo, password);
+            }                 
         });
         
         $("#botonRegistro").on("click", function(e) {
@@ -59,6 +75,7 @@ define([], function() {
         $("#panelCentral").find("*").remove();
         
         var panel = $("<h1>Nuevo usuario</h1>" +
+                "<div id='erroresRegistro'></div>" +
             "<form id='formRegistro' class='form-horizontal' role='form'>" +
                 "<div class='form-group'>" +
                     "<label class='contol-label col-sm-2' for='correo'>" +
@@ -135,7 +152,7 @@ define([], function() {
                 Sexo: $("input[name=tipoSexo]:checked", "#formRegistro").val(),
                 FechaNacimiento: $("#fNacimiento").val()
             };
-            registrar(usuario);        
+            if(validaRegistro(usuario)) registrar(usuario);        
         });
     }
     
@@ -151,8 +168,6 @@ define([], function() {
             },
             success: function(data, state, jqXHR) {
                 if (data.permitido) {
-                    console.log("¡Acceso permitido!");                    
-                    
                     $("#navDerecha").find("li").remove();
                     var datosUsuario = $("<li id='datosUser'>" + correo + "</li>");
                     $("#navDerecha").append(datosUsuario);
@@ -176,7 +191,13 @@ define([], function() {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown ) {
-                console.log("¡Acceso denegado!");
+                if(jqXHR.responseText === "-1\n"){
+                    $("#erroresLogin").text("");
+                    $("#erroresLogin").addClass("alert alert-danger");
+                    $("#erroresLogin").append("<strong>¡Usuario o contraseña incorrectos!</strong>");
+                } else {
+                    alert( "Se ha producido un error: " + jqXHR.responseText);
+                }
             }
                     
         });
@@ -194,7 +215,13 @@ define([], function() {
                 login(usuario.Correo, usuario.Password);
             },
             error: function (jqXHR, textStatus, errorThrown ) {
-                console.log("¡No registrado!");
+                if(jqXHR.responseJSON.code === "ER_DUP_ENTRY"){
+                    $("#erroresRegistro").text("");
+                    $("#erroresRegistro").addClass("alert alert-danger");
+                    $("#erroresRegistro").append("<strong>¡Error!</strong> Ya existe un usuario con esa dirección de correo.");
+                } else {
+                    alert( "Se ha producido un error: " + jqXHR.responseJSON.code);
+                }
             }
                     
         });
@@ -223,7 +250,7 @@ define([], function() {
                     });
                 },
                 error: function (jqXHR, textStatus, errorThrown ) {
-                    console.log("¡Acceso denegado!");
+                    alert("¡Acceso denegado!");
                 }
 
             });            
@@ -260,12 +287,11 @@ define([], function() {
             },
             data: JSON.stringify({ Id: idCurso }),
             success: function(data, state, jqXHR) {
-                console.log("¡Incrito!");
                 $("#insribirseCurso").remove();
                 $(".modal-footer").append("<a href='#' disabled='disabled' class='btn btn-success' id='insritoCurso'>Inscrito con éxito</a>");
             },
             error: function (jqXHR, textStatus, errorThrown ) {
-                console.log("¡Error al inscribirse!");
+                alert( "Se ha producido un error: " + jqXHR.responseJSON.code);
             }
                     
         });
@@ -302,7 +328,31 @@ define([], function() {
                 "</tbody>" +
                 "</table>" +
             "</div>");
-        $("#panelCentral").append(panelActuales); 
+    
+        $("#panelCentral").append(panelActuales);
+    
+        var panelHorarios = $("<h1>Horario</h1>" +
+            "<div id='tablaHorarios' class='table-responsive'>" +
+                "<table class='table  table-bordered'>" +
+                "<thead>" +
+                        "<tr><th>Horas</th>" +
+                        "<th>Lunes</th>" +
+                        "<th>Martes</th>" +
+                        "<th>Miercoles</th>" +
+                        "<th>Jueves</th>" +
+                        "<th>Viernes</th>" +
+                        "<th>Sabado</th>" +
+                        "<th>Domingo</th></tr>" +
+                        "</thead>" +
+                "<tbody>               " +
+                "</tbody>" +
+                "</table>" +
+                "<div id='paginadorHorarios'></div>" +
+            "</div>");
+           
+        $("#panelCentral").append(panelHorarios); 
+        
+        
         
         var modal = $("<div class='modal fade' id='infoCurso' tabindex='-1' role='dialog' aria-labelledby='cursoModal' aria-hidden='true'>" +
                 "<div class='modal-dialog' role='document'>" +
@@ -368,12 +418,215 @@ define([], function() {
                 $("#tablaCursosActuales tbody tr").on("click", function() {
                     requirejs("cursos").mostrarInfoCurso(Number($(this).data("id")));
                 });
+                
+                muestraHorario(data);
             },
             error: function (jqXHR, textStatus, errorThrown ) {
-                console.log("¡Acceso denegado!");
+                alert("¡Acceso denegado!");
             }
                     
         });
+    }
+    
+    function validaRegistro(usuario){
+        $("#erroresRegistro").text("");
+        $("#erroresRegistro").removeClass("alert alert-danger");
+        var dtRegex = new RegExp(/\b\d\d\/\d\d\/\d\d\d\d\b/);
+
+        if(usuario.Correo === ""){
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> La dirección de correo no puede estar vacia.");
+        } else if(usuario.Password === "") {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> La contraseña no puede estar vacia.");
+        } else if(usuario.Nombre === "") {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> El nombre no puede estar vacio.");
+        } else if(usuario.Apellidos === "") {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> Debes introducir Apellidos.");
+        } else if(usuario.Sexo === undefined) {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> Debes elegir un sexo.");
+        } else if(usuario.FechaNacimiento === "") {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> La fecha de nacimiento no puede estar vacia.");
+        } else if(!dtRegex.test(usuario.FechaNacimiento)) {
+            $("#erroresRegistro").addClass("alert alert-danger");
+            $("#erroresRegistro").append("<strong>¡Error!</strong> El formato de la fecha de nacimiento debe ser del tipo dd/mm/aaaa.");
+        } else {
+            return true;
+        }            
+        return false;
+    }
+    
+    function rellenaHorario(semanaActual){
+        // Guardamos los horarios de la semana actual en un array
+        var horariosSemanaActual = [];
+        semanaActual.forEach(function (curso){
+            curso.DatosCurso.Horarios.forEach(function (horario){
+                horario.Nombre = curso.DatosCurso.Titulo;            
+                horariosSemanaActual.push(horario);        
+            });                
+        });
+        
+        // Ordenamos el array por fecha de inicio
+        if(horariosSemanaActual.length > 0){
+            horariosSemanaActual.sort(function(a, b){ 
+                if(a.HoraInicio === b.HoraInicio){
+                    return a.HoraFin > b.HoraFin; 
+                } else {
+                    return a.HoraInicio > b.HoraInicio;
+                }            
+            });
+        }
+        
+        // Calculamos las filas necesarias
+        var tramos = [];
+        tramos[0] = "00:00";
+        tramos[1] = "24:00";
+        var iHoras = 2;
+        horariosSemanaActual.forEach(function(horario, index, array){
+            if(!tramos.includes(horario.HoraInicio)){
+                tramos[iHoras] = horario.HoraInicio;
+                iHoras++;
+            }
+            if(!tramos.includes(horario.HoraFin)){
+                tramos[iHoras] = horario.HoraFin;
+                iHoras++;
+            }
+        });        
+        tramos.sort();         
+        for(var i = 0; i < tramos.length - 1; i++){
+            $("#tablaHorarios").find("tBody").append("<tr id='tramo" + i +"'><td>" + tramos[i] + " - " + tramos[i+1] + "</td></tr>");
+        }
+        
+        
+        // Rellenamos la tabla
+        for(var i = 1; i <= 7;i++){
+            var diaActual = horariosSemanaActual.filter(function(h){
+               if( h.Dia === i) return true; 
+            });
+            
+            var texto = "";
+            var tamanyoCol = 1;
+            tramos.forEach(function(tramo, index, array){
+                var textoAnterior = texto;
+                diaActual.forEach(function(hor, indexH, arrayH) {
+                    if(comparaHorarios(hor.HoraInicio, tramo) <= 0 && comparaHorarios(hor.HoraFin, tramo) > 0){
+                        if(texto === "") texto = hor.Nombre;
+                        else texto += " / " +  hor.Nombre;
+                    }
+                });
+                if(texto !== "" && texto === textoAnterior) tamanyoCol++;
+                else {
+                    if(texto === "")$("#tramo" + index).append("<td></td>");
+                    else
+                        $("#tramo" + index).append("<td class='bg-success' align='center' valign='middle' rowspan='" + tamanyoCol + "'>" + texto + "</td>");
+                    tamanyoCol = 1;
+                    texto = "";
+                }
+            });
+        }        
+    }
+    
+    function muestraHorario(data){
+        // Filtramos los datos por la semana actual
+        var inicioSemana = new Date();
+        inicioSemana.setDate(inicioSemana.getDate() - inicioSemana.getDay() + 1);
+        var finSemana = new Date(inicioSemana);
+        finSemana.setDate(finSemana.getDate() + 6);
+        inSemHorarioActual = inicioSemana;
+        
+        var semanaActual = data.filter(function (curso){
+            var fechaInicio = formateaFecha(curso.DatosCurso.FechaInicio);
+            var fechaFin = formateaFecha(curso.DatosCurso.FechaFin);
+            if( fechaInicio <= finSemana && fechaFin >= inicioSemana){
+                return true;
+            }
+        });
+        
+        // Mostramos el horario de la semana actual
+        rellenaHorario(semanaActual);       
+        
+        $("#paginadorHorarios").append("<button id='btnHAnterior' class='btn btn-default botonHorario' type='submit' align='left'> &larr; Semana anterior</button>");
+        $("#paginadorHorarios").append("<div id='semanaHor' align='center'>" + textoPeriodoHActual(inicioSemana, finSemana) + "</div>");
+        $("#paginadorHorarios").append("<button id='btnHSiguiente' class='btn btn-default botonHorario' type='submit'>Semana siguiente &rarr; </button>");
+        
+        $("#btnHAnterior").on("click", function(e) {
+            e.preventDefault();
+            
+            var inicioSemAct = new Date(inSemHorarioActual);
+            inicioSemAct.setDate(inicioSemAct.getDate() - 7);
+            obtenYRellenaHorario(inicioSemAct);
+        });
+        
+        $("#btnHSiguiente").on("click", function(e) {
+            e.preventDefault();
+            
+            var inicioSemAct = new Date(inSemHorarioActual);
+            inicioSemAct.setDate(inicioSemAct.getDate() + 7);
+            obtenYRellenaHorario(inicioSemAct);
+        });
+    }
+    
+    function obtenYRellenaHorario(inicioSemana){
+        var finSemAct = new Date(inicioSemana);
+        finSemAct.setDate(finSemAct.getDate() + 6);
+        inSemHorarioActual = inicioSemana;       
+        
+        $.ajax({
+            method: "GET",
+            url: "/usuarios/horarioSemana/" + formateaFechaPeticion(inicioSemana) + "/" + formateaFechaPeticion(finSemAct),
+            beforeSend: function(req) {
+                req.setRequestHeader("Authorization",
+                "Basic " + cadenaBase64);
+            },
+            success: function(data, state, jqXHR) {
+                $("#tablaHorarios").find("tBody").find("*").remove();
+                rellenaHorario(data);              
+                $("#semanaHor").text(textoPeriodoHActual(inicioSemana, finSemAct));
+            }, 
+            error: function (jqXHR, textStatus, errorThrown ) {
+                alert("¡Acceso denegado!");
+            }
+        });  
+    }
+    
+    function formateaFecha(stringDate){
+        var fNacimiento = new Date();
+        fNacimiento.setDate(Number(stringDate.substring(0,2)));
+        fNacimiento.setMonth(Number(stringDate.substring(3,5)) - 1);
+        fNacimiento.setFullYear(Number(stringDate.substring(6,10)));
+
+        return fNacimiento;
+    }    
+    
+    function comparaHorarios(a, b) { 
+        var horaA = parseInt(a.substring(0,2));
+        var minutosA = parseInt(a.substring(3,5));
+        var horaB = parseInt(b.substring(0,2));
+        var minutosB = parseInt(b.substring(3,5));
+        if(horaA === horaB)
+            return minutosA - minutosB;
+        else
+            return horaA-horaB;
+    }
+    
+    function formateaFechaSalida(date){
+        var fechaFormateada = ('0' + Number(date.getDate())).slice(-2) + "/" + ('0' + Number(date.getMonth()+1)).slice(-2) + "/" + date.getFullYear();    
+        return fechaFormateada;
+    }
+    
+    function formateaFechaPeticion(mySQLDate){
+    var fechaFormateada = ('0' + Number(mySQLDate.getDate())).slice(-2) + ('0' + Number(mySQLDate.getMonth()+1)).slice(-2) + mySQLDate.getFullYear();    
+    return fechaFormateada;
+}
+    
+    function textoPeriodoHActual(inicioSemana, finSemana){
+        var text = formateaFechaSalida(inicioSemana) + " - " + formateaFechaSalida(finSemana);
+        
+        return text;
     }
     
     return {

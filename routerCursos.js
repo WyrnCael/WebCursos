@@ -84,7 +84,7 @@ routerCursos.get("/:str/:num/:pos", function(req, res){
     DAO.searchByNameCurso(datosBusqueda, function(err, r){
        if(err){
            res.status(500);
-           res.json(JSON.stringify(err));
+           res.json(err);
        } else {
            res.status(200);
            res.json(JSON.stringify(r));

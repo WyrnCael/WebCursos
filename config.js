@@ -18,5 +18,11 @@ module.exports = {
     dbHost: "localhost",
     
     // Puerto en el que escucha vuestra aplicación
-    port: 3000
+    port: 5555,
+    
+    // Nombre del fichero que contiene la clave privada
+    private_key: "clave_grupo_111.pem",
+    
+    // Nombre del fichero que contiene el certificado firmado
+    certificate: "certificado_firmado.crt"
 };

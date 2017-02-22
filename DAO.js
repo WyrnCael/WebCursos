@@ -181,7 +181,8 @@ function selectHorariosCurso(curso, callback){
                         h.HoraInicio = formateaHoraSalida(h.HoraInicio) ;
                         h.HoraFin = formateaHoraSalida(h.HoraFin) ;
                         if(index === array.length - 1){
-                            curso.Horarios = horarios; 
+                            curso.Horarios = horarios;
+                            curso.Horarios.sort(function(a, b){ return a.Dia > b.Dia; });
                             callback(null, curso);
                         }
                     });                    
@@ -359,6 +360,31 @@ function getInfoCursosUsuarios(cursos, index, callback){
     });    
 }
 
+function selectCursoSemanaAct(curso, callback){
+    pool.getConnection(function(err, con) {
+    if (err) {
+        callback(err);
+    } else {
+        con.query("SELECT IdUsuario, Cursos.Id AS IdCurso, FechaInicio, FechaFin, NumPlazas FROM CURSOS"+
+                " JOIN UsuariosEnCursos" +
+                " ON Cursos.Id = UsuariosEnCursos.IdCurso" +
+                " HAVING UsuariosEnCursos.IdUsuario = ? AND Cursos.FechaInicio <= ? AND Cursos.FechaFin >= ?", 
+            [curso.IdUsuario, curso.FechaFin, curso.FechaInicio],
+            function(err, rows) { 
+                con.release();  
+                if (err) {
+                    callback(err);
+                } else {
+                    if(rows[0]){
+                        getInfoCursosUsuarios(rows, 0, callback); 
+                    } else{
+                        callback(null, []);
+                    }
+                }                
+            });
+        }
+    });
+}
 
 function formateaFechaSalida(mySQLDate){
     var fechaFormateada = ('0' + Number(mySQLDate.getDate())).slice(-2) + "/" + ('0' + Number(mySQLDate.getMonth()+1)).slice(-2) + "/" + mySQLDate.getFullYear();    
@@ -410,5 +436,6 @@ module.exports = {
     insertUsuario: insertUsuario,
     login: login,
     inscribirUsuarioEnCurso: inscribirUsuarioEnCurso,
-    getCursosUsuario: getCursosUsuario
+    getCursosUsuario: getCursosUsuario,
+    selectCursoSemanaAct: selectCursoSemanaAct
 };

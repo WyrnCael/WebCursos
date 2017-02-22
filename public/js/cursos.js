@@ -23,7 +23,7 @@ define(["usuarios"], function(usuarios) {
                 },
 
                 error: function (jqXHR, textStatus, errorThrown ) {
-                    alert( "Se ha producido un error: " + textStatus);
+                    alert( "Se ha producido un error: " + jqXHR.responseJSON.code);
                 }
            });
     }
@@ -116,7 +116,7 @@ define(["usuarios"], function(usuarios) {
                 if(data.Horarios !== undefined) 
                     data.Horarios.forEach(function(p, index, array){
                         if(index > 0) cuerpo += ", ";
-                        cuerpo += p.Dia + ": " + p.HoraInicio.substring(0,5) + " - " + p.HoraFin.substring(0,5); 
+                        cuerpo += formateaDia(p.Dia) + ": " + p.HoraInicio.substring(0,5) + " - " + p.HoraFin.substring(0,5); 
 
                     });
                 cuerpo += "</p><p class='tituloCuerpo'>Numero de plazas:</p>" + 
@@ -135,7 +135,7 @@ define(["usuarios"], function(usuarios) {
             },
 
             error: function (jqXHR, textStatus, errorThrown ) {
-                alert( "Se ha producido un error: " + textStatus);
+                alert( "Se ha producido un error: " + jqXHR.responseJSON.code);
             }
         });
     }
@@ -157,6 +157,34 @@ define(["usuarios"], function(usuarios) {
                     $("#imagenCurso img").remove();
                 }
            });
+    }
+    
+    function formateaDia(intDia){
+        switch(intDia){
+            case 1:
+                return "Lun";
+                break;
+            case 2:
+                return "Mar";
+                break;
+            case 3:
+                return "Mié";
+                break;
+            case 4:
+                return "Jue";
+                break;
+            case 5:
+                return "Vie";
+                break;
+            case 6:
+                return "Sáb";
+                break;
+            case 7:
+                return "Dom";
+                break;
+        }
+        
+        return null;
     }
 
     return {

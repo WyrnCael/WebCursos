@@ -1,0 +1,19 @@
+{ "Titulo": "Curso de ejemplo",
+	"Descripcion": "Las fechas tienen el formato dd/mm/aaaa, las hora formato hh:mm y los dias del 1 (lunes) al 7(domingo)",
+	"Localidad": "Madrid",
+	"Direccion": "Facultado De Informática",
+	"NumPlazas": 125,
+	"FechaInicio": "05/02/2017",
+	"FechaFin": "08/03/2017",
+	"Horarios": [
+		{ "Dia": 1,
+			"HoraInicio": "12:30",
+			"HoraFin": "13:45" },
+		{ "Dia": 2,
+			"HoraInicio": "14:00",
+			"HoraFin": "15:00" },
+		{ "Dia": 3,
+			"HoraInicio": "15:00",
+			"HoraFin": "17:00" }			
+	]
+}

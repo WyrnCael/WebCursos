@@ -75,4 +75,21 @@ routerUsuarios.get("/cursos", passport.authenticate('basic', {session: false}), 
     });
 });
 
+routerUsuarios.get("/horarioSemana/:inicioSemana/:finSemana", passport.authenticate('basic', {session: false}), function(req, res) {
+    var curso = {};
+    var inicio = req.params.inicioSemana;
+    var fin = req.params.finSemana;
+    curso.FechaInicio = Number(inicio.substring(4,8)) + "-" + Number(inicio.substring(2,4)) + "-" + Number(inicio.substring(0,2));
+    curso.FechaFin = Number(fin.substring(4,8)) + "-" + Number(fin.substring(2,4)) + "-" + Number(fin.substring(0,2));   
+    curso.IdUsuario = req.user.Id;
+    DAO.selectCursoSemanaAct(curso, function(err, cursos){
+        if(err){
+            res.status(500);
+            res.json(err);
+        } else {
+           res.json(cursos);
+        }
+    });
+});
+
 module.exports = routerUsuarios;
