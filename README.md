@@ -23,5 +23,6 @@ Práctica de la asignatura de Aplicaciones Web.
     - [Ajax](http://api.jquery.com/jquery.ajax/)
  - [Bootstrap](http://getbootstrap.com/)
  - [XAMPP](https://www.apachefriends.org/es/index.html)
+ - [OpenSSL](https://www.openssl.org/)
 
 
